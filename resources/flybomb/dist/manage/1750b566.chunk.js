@@ -97,6 +97,8 @@ webpackJsonp([3],{
 			});
 		},
 		componentDidMount: function componentDidMount() {
+			var _this2 = this;
+
 			document.querySelector('#home').className = 'active';
 			this.getList();
 			var obj = _utils2.default.getQueryObj(window.location.hash);
@@ -106,6 +108,9 @@ webpackJsonp([3],{
 			if (!obj.id) return;
 			_ajax2.default.post(_urlModel2.default.questionFindOne, data, function (result) {
 				console.log(result);
+				_this2.setState({
+					editData: result.value
+				});
 			});
 		},
 		cantNull: function cantNull(type, html) {
@@ -125,6 +130,8 @@ webpackJsonp([3],{
 		},
 		handleSubmit: function handleSubmit() {
 			var type = this.props.form.getFieldValue('type');
+			var obj = _utils2.default.getQueryObj(window.location.hash);
+			var id = obj.id;
 			this.props.form.validateFields(function (errors, values) {
 				var content = [],
 				    answer = '';
@@ -152,9 +159,17 @@ webpackJsonp([3],{
 					subject: values.subject,
 					content: content,
 					type: values.type,
+					point: values.point || '',
 					answer: answer,
 					title: values.title
 				};
+				if (id) {
+					data.questionId = id;
+					_ajax2.default.post(_urlModel2.default.updateQuestion, data, function () {
+						_antd.message.success('修改成功');
+					});
+					return;
+				}
 				_ajax2.default.post(_urlModel2.default.addQuestion, data, function () {
 					_antd.message.success('新建成功');
 				});
@@ -167,12 +182,12 @@ webpackJsonp([3],{
 			var getFieldDecorator = this.props.form.getFieldDecorator;
 
 			var type = this.props.form.getFieldValue('type');
-			console.log(type);
 			var html = void 0;
-
-			if (type === '1') {
+			var editData = this.state.editData;
+			if (type == '1') {
 				var listRadio = ['A', 'B', 'C', 'D'];
 				html = listRadio.map(function (data, key) {
+
 					return _react2.default.createElement(
 						_antd.Row,
 						{ style: { height: 44 }, key: key },
@@ -185,6 +200,7 @@ webpackJsonp([3],{
 							_antd.Col,
 							{ span: '23' },
 							getFieldDecorator('content_radio_' + data, {
+								initialValue: editData ? editData.content[key] : '',
 								validate: [{
 									rules: [{
 										whitespace: true,
@@ -198,7 +214,7 @@ webpackJsonp([3],{
 						)
 					);
 				});
-			} else if (type === '2') {
+			} else if (type == '2') {
 				var listCheckbox = ['A', 'B', 'C', 'D', 'E'];
 				html = listCheckbox.map(function (data, key) {
 					return _react2.default.createElement(
@@ -213,6 +229,7 @@ webpackJsonp([3],{
 							_antd.Col,
 							{ span: '23' },
 							getFieldDecorator('content_checkbox_' + data, {
+								initialValue: editData ? editData.content[key] : '',
 								validate: [{
 									rules: [{
 										whitespace: true,
@@ -228,6 +245,7 @@ webpackJsonp([3],{
 				});
 			} else {
 				html = getFieldDecorator('content', {
+					initialValue: editData ? editData.content : '',
 					validate: [{
 						rules: [{
 							whitespace: true,
@@ -256,13 +274,14 @@ webpackJsonp([3],{
 
 			var type = this.props.form.getFieldValue('type');
 			var html = void 0;
-
+			var editData = this.state.editData;
 			var radioStyle = {
 				display: 'block',
 				height: '32px',
 				lineHeight: '32px'
 			};
-			if (type === '1') {
+			var answer = void 0;
+			if (type == '1') {
 				var listRadio = ['A', 'B', 'C', 'D'];
 				var radios = listRadio.map(function (data, key) {
 					return _react2.default.createElement(
@@ -284,7 +303,8 @@ webpackJsonp([3],{
 						radios
 					)
 				);
-			} else if (type === '2') {
+				answer = editData ? editData.answer : null;
+			} else if (type == '2') {
 				var listCheckbox = ['A', 'B', 'C', 'D', 'E'];
 				var checkbox = listCheckbox.map(function (data, key) {
 					return _react2.default.createElement(
@@ -306,10 +326,14 @@ webpackJsonp([3],{
 						checkbox
 					)
 				);
+				answer = editData ? editData.answer : null;
+				answer = editData ? answer.split(',') : [];
 			} else {
 				html = _react2.default.createElement(_antd.Input, { type: 'textarea', rows: 6 });
+				answer = editData ? editData.answer : '';
 			}
 			var dom = getFieldDecorator('answer_' + type, {
+				initialValue: answer,
 				validate: [{
 					rules: [{
 						required: true,
@@ -324,6 +348,11 @@ webpackJsonp([3],{
 		render: function render() {
 
 			var type = this.props.form.getFieldValue('type');
+
+			var obj = _utils2.default.getQueryObj(window.location.hash);
+			var id = obj.id;
+			var buttonText = id ? '修改' : '创建';
+			var editData = this.state.editData;
 
 			var getFieldDecorator = this.props.form.getFieldDecorator;
 
@@ -389,6 +418,7 @@ webpackJsonp([3],{
 								FormItem,
 								_extends({}, formItemLayout, { label: '\u79D1\u76EE' }),
 								getFieldDecorator('subject', {
+									initialValue: editData ? editData.subject : '',
 									validate: [{
 										rules: [{
 											required: true,
@@ -407,6 +437,7 @@ webpackJsonp([3],{
 								FormItem,
 								_extends({}, formItemLayout, { label: '\u7C7B\u578B' }),
 								getFieldDecorator('type', {
+									initialValue: editData ? String(editData.type) : '',
 									onChange: this.onChangeType,
 									validate: [{
 										rules: [{
@@ -426,6 +457,7 @@ webpackJsonp([3],{
 								FormItem,
 								_extends({}, formItemLayout, { label: '\u6807\u9898' }),
 								getFieldDecorator('title', {
+									initialValue: editData ? editData.title : '',
 									validate: [{
 										rules: [{
 											whitespace: true,
@@ -447,13 +479,28 @@ webpackJsonp([3],{
 								_extends({}, formItemLayout, { label: '\u7B54\u6848' }),
 								this.getAnswer()
 							),
+							type < 3 && _react2.default.createElement(
+								FormItem,
+								_extends({}, formItemLayout, { label: '\u8981\u70B9\u900F\u6790' }),
+								getFieldDecorator('point', {
+									initialValue: editData ? editData.point : '',
+									validate: [{
+										rules: [{
+											required: true,
+											message: '请填写要点透析'
+										}],
+										trigger: ['onBlur', 'onChange']
+									}]
+
+								})(_react2.default.createElement(_antd.Input, { type: 'textarea', rows: 6 }))
+							),
 							_react2.default.createElement(
 								FormItem,
 								_extends({ className: 'create_app' }, formItemLayout, { label: '\xA0' }),
 								_react2.default.createElement(
 									_antd.Button,
 									{ type: 'primary', className: 'btn_normal_show color_bg', onClick: this.handleSubmit, size: 'large' },
-									'\u521B\u5EFA'
+									buttonText
 								)
 							)
 						)

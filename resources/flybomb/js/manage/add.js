@@ -44,9 +44,12 @@ let Add = React.createClass({
 		let data = {
 			id: obj.id
 		};
-		if(!obj.id)return;
-		ajax.post(restapi.questionFindOne, data, function (result) {
+		if (!obj.id) return;
+		ajax.post(restapi.questionFindOne, data, (result) => {
 			console.log(result)
+			this.setState({
+				editData: result.value
+			});
 		});
 	},
 	cantNull(type, html) {
@@ -65,6 +68,8 @@ let Add = React.createClass({
 	},
 	handleSubmit() {
 		let type = this.props.form.getFieldValue('type');
+		let obj = utils.getQueryObj(window.location.hash);
+		let id = obj.id;
 		this.props.form.validateFields((errors, values) => {
 			let content = [],
 				answer = '';
@@ -92,9 +97,17 @@ let Add = React.createClass({
 				subject: values.subject,
 				content: content,
 				type: values.type,
+				point: values.point || '',
 				answer: answer,
 				title: values.title
 			};
+			if (id) {
+				data.questionId = id;
+				ajax.post(restapi.updateQuestion, data, function () {
+					message.success('修改成功');
+				});
+				return;
+			}
 			ajax.post(restapi.addQuestion, data, function () {
 				message.success('新建成功');
 			});
@@ -107,15 +120,16 @@ let Add = React.createClass({
 
 		const { getFieldDecorator } = this.props.form;
 		let type = this.props.form.getFieldValue('type');
-		console.log(type)
 		let html;
-
-		if (type === '1') {
+		let editData = this.state.editData;
+		if (type == '1') {
 			let listRadio = ['A', 'B', 'C', 'D'];
 			html = listRadio.map(function (data, key) {
+
 				return <Row style={{ height: 44 }} key={key}><Col span="1">{data}</Col><Col span="23">
 
 					{getFieldDecorator('content_radio_' + data, {
+						initialValue: editData ? editData.content[key] : '',
 						validate: [{
 							rules: [{
 								whitespace: true,
@@ -129,12 +143,13 @@ let Add = React.createClass({
 				</Col>
 				</Row>
 			});
-		} else if (type === '2') {
+		} else if (type == '2') {
 			let listCheckbox = ['A', 'B', 'C', 'D', 'E'];
 			html = listCheckbox.map(function (data, key) {
 				return <Row style={{ height: 44 }} key={key} ><Col span="1">{data}</Col><Col span="23">
 
 					{getFieldDecorator('content_checkbox_' + data, {
+						initialValue: editData ? editData.content[key] : '',
 						validate: [{
 							rules: [{
 								whitespace: true,
@@ -149,6 +164,7 @@ let Add = React.createClass({
 			});
 		} else {
 			html = getFieldDecorator('content', {
+				initialValue: editData ? editData.content : '',
 				validate: [{
 					rules: [{
 						whitespace: true,
@@ -177,13 +193,14 @@ let Add = React.createClass({
 		const { getFieldDecorator } = this.props.form;
 		let type = this.props.form.getFieldValue('type');
 		let html;
-
+		let editData = this.state.editData;
 		const radioStyle = {
 			display: 'block',
 			height: '32px',
 			lineHeight: '32px',
 		};
-		if (type === '1') {
+		let answer;
+		if (type == '1') {
 			let listRadio = ['A', 'B', 'C', 'D'];
 			let radios = listRadio.map(function (data, key) {
 				return <Col key={key} span="3"><Radio style={radioStyle} value={data}>
@@ -196,7 +213,8 @@ let Add = React.createClass({
 
 				<Row>{radios}</Row>
 			</RadioGroup>;
-		} else if (type === '2') {
+			answer = editData ? editData.answer : null;
+		} else if (type == '2') {
 			let listCheckbox = ['A', 'B', 'C', 'D', 'E'];
 			let checkbox = listCheckbox.map(function (data, key) {
 				return <Col key={key} span="3"><Checkbox value={data}>
@@ -207,11 +225,15 @@ let Add = React.createClass({
 			html = <Checkbox.Group>
 				<Row >{checkbox}</Row>
 			</Checkbox.Group>;
+			answer = editData ? editData.answer : null;
+			answer = editData ? answer.split(',') : [];
 
 		} else {
-			html = <Input type="textarea" rows={6} />
+			html = <Input type="textarea" rows={6} />;
+			answer = editData ? editData.answer : '';
 		}
 		let dom = getFieldDecorator('answer_' + type, {
+			initialValue: answer,
 			validate: [{
 				rules: [{
 					required: true,
@@ -228,7 +250,10 @@ let Add = React.createClass({
 
 		let type = this.props.form.getFieldValue('type');
 
-
+		let obj = utils.getQueryObj(window.location.hash);
+		let id = obj.id;
+		let buttonText = id ? '修改' : '创建';
+		let editData = this.state.editData;
 
 		const { getFieldDecorator } = this.props.form;
 		var self = this;
@@ -240,7 +265,7 @@ let Add = React.createClass({
 
 			return <Select.Option key={key} value={String(data.type)}>{data.type_desc}</Select.Option>
 		});
-	
+
 		return (
 			<div >
 				<div className="home_toolbar">
@@ -262,6 +287,7 @@ let Add = React.createClass({
 						<Col span="18">
 							<FormItem {...formItemLayout} label="科目" >
 								{getFieldDecorator('subject', {
+									initialValue: editData ? editData.subject : '',
 									validate: [{
 										rules: [{
 											required: true,
@@ -278,6 +304,7 @@ let Add = React.createClass({
 							</FormItem>
 							<FormItem {...formItemLayout} label="类型" >
 								{getFieldDecorator('type', {
+									initialValue: editData ? String(editData.type) : '',
 									onChange: this.onChangeType,
 									validate: [{
 										rules: [{
@@ -295,6 +322,7 @@ let Add = React.createClass({
 							</FormItem>
 							<FormItem {...formItemLayout} label="标题" >
 								{getFieldDecorator('title', {
+									initialValue: editData ? editData.title : '',
 									validate: [{
 										rules: [{
 											whitespace: true,
@@ -316,10 +344,25 @@ let Add = React.createClass({
 
 								{this.getAnswer()}
 							</FormItem>
+							{type < 3 &&
+								<FormItem {...formItemLayout} label="要点透析" >
 
+									{getFieldDecorator('point', {
+										initialValue: editData ? editData.point : '',
+										validate: [{
+											rules: [{
+												required: true,
+												message: '请填写要点透析'
+											}],
+											trigger: ['onBlur', 'onChange']
+										}]
+
+									})(<Input type="textarea" rows={6} />)}
+								</FormItem>
+							}
 
 							<FormItem className="create_app"  {...formItemLayout} label="&nbsp;">
-								<Button  type="primary" className="btn_normal_show color_bg" onClick={this.handleSubmit} size="large">创建</Button>
+								<Button type="primary" className="btn_normal_show color_bg" onClick={this.handleSubmit} size="large">{buttonText}</Button>
 
 							</FormItem>
 
