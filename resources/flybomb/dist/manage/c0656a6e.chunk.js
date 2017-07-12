@@ -227,11 +227,11 @@ webpackJsonp([2],{
 
 	var _ajax2 = _interopRequireDefault(_ajax);
 
-	var _type = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./type\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _questionType = __webpack_require__(1693);
 
-	var _type2 = _interopRequireDefault(_type);
+	var _questionType2 = _interopRequireDefault(_questionType);
 
-	var _reactRouter = __webpack_require__(1693);
+	var _reactRouter = __webpack_require__(1694);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -251,7 +251,7 @@ webpackJsonp([2],{
 					key: '1',
 					dataIndex: 'type',
 					render: function render(text, record) {
-						var filter = _type2.default.filter(function (data) {
+						var filter = _questionType2.default.filter(function (data) {
 							return data.type === text;
 						});
 						return filter[0].type_desc;
@@ -283,6 +283,30 @@ webpackJsonp([2],{
 		}
 	});
 	exports.render = HomeTable;
+
+/***/ },
+
+/***/ 1693:
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = [{
+		type: 1,
+		type_desc: '单选题'
+	}, {
+		type: 2,
+		type_desc: '多选题'
+	}, {
+		type: 3,
+		type_desc: '名词解释'
+	}, {
+		type: 4,
+		type_desc: '简答题'
+	}, {
+		type: 5,
+		type_desc: '论述题'
+	}];
 
 /***/ }
 

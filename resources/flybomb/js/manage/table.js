@@ -6,7 +6,7 @@ import restapi from '../../lib/url-model';
 import utils from '../../lib/utils';
 import ajax from '../../components/ajax';
 
-import questionType from './type';
+import questionType from '../question-type';
 import { Link } from 'react-router';
 
 

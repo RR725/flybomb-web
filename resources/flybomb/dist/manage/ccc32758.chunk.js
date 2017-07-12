@@ -1,6 +1,30 @@
 webpackJsonp([3],{
 
-/***/ 1755:
+/***/ 1693:
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = [{
+		type: 1,
+		type_desc: '单选题'
+	}, {
+		type: 2,
+		type_desc: '多选题'
+	}, {
+		type: 3,
+		type_desc: '名词解释'
+	}, {
+		type: 4,
+		type_desc: '简答题'
+	}, {
+		type: 5,
+		type_desc: '论述题'
+	}];
+
+/***/ },
+
+/***/ 1756:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25,11 +49,11 @@ webpackJsonp([3],{
 
 	var _ajax2 = _interopRequireDefault(_ajax);
 
-	var _addSubject = __webpack_require__(1756);
+	var _addSubject = __webpack_require__(1757);
 
 	var _addSubject2 = _interopRequireDefault(_addSubject);
 
-	var _questionType = __webpack_require__(1757);
+	var _questionType = __webpack_require__(1693);
 
 	var _questionType2 = _interopRequireDefault(_questionType);
 
@@ -484,7 +508,7 @@ webpackJsonp([3],{
 
 /***/ },
 
-/***/ 1756:
+/***/ 1757:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -594,30 +618,6 @@ webpackJsonp([3],{
 	App = _antd.Form.create()(App);
 
 	module.exports = App;
-
-/***/ },
-
-/***/ 1757:
-/***/ function(module, exports) {
-
-	'use strict';
-
-	module.exports = [{
-		type: 1,
-		type_desc: '单选题'
-	}, {
-		type: 2,
-		type_desc: '多选题'
-	}, {
-		type: 3,
-		type_desc: '名词解释'
-	}, {
-		type: 4,
-		type_desc: '简答题'
-	}, {
-		type: 5,
-		type_desc: '论述题'
-	}];
 
 /***/ }
 
