@@ -31,7 +31,7 @@ let config = {
 			loader: 'babel',
 			query: {
 				presets: ['react', 'es2015'],
-				plugins: [["import", { libraryName: "antd-mobile", style: true }]]
+				plugins: [["import", { libraryName: "antd-mobile" }]]
 				
 			}
 		}, {
@@ -51,7 +51,7 @@ let config = {
 	devServer: {
 		proxy: {//访问时可以避免接口跨域
 			'/restapi/*': {
-				target: 'http://127.0.0.1:3000/',
+				target: 'http://127.0.0.1:3456/',
 				changeOrigin: true
 
 			}

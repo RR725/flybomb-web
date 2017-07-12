@@ -8,7 +8,7 @@ import restapi from '../../lib/url-model';
 import utils from '../../lib/utils';
 import ajax from '../../components/ajax';
 import AddSubject from './add-subject';
-import questionType from './type';
+import questionType from '../question-type';
 const formItemLayout = {
 	labelCol: {
 		span: 5
@@ -349,13 +349,6 @@ let Add = React.createClass({
 
 									{getFieldDecorator('point', {
 										initialValue: editData ? editData.point : '',
-										validate: [{
-											rules: [{
-												required: true,
-												message: '请填写要点透析'
-											}],
-											trigger: ['onBlur', 'onChange']
-										}]
 
 									})(<Input type="textarea" rows={6} />)}
 								</FormItem>

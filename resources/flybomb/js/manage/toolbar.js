@@ -22,10 +22,9 @@ let App = React.createClass({
 	componentDidMount() {
 
 		let searchParam = {
-			index: 1
+			pageNum: 1
 		};
 
-		searchParam.index = 1;
 		this.props.getTableData(searchParam);
 
 	},

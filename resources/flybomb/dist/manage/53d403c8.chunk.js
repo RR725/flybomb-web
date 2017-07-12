@@ -45,7 +45,8 @@ webpackJsonp([2],{
 			var self = this;
 
 			var url = _urlModel2.default.questionList;
-			_ajax2.default.post(url, {}, function (result) {
+
+			_ajax2.default.post(url, searchParam, function (result) {
 				console.log(result);
 				var data = result.value.result;
 				data.map(function (json, key) {
@@ -57,19 +58,14 @@ webpackJsonp([2],{
 						loading: false,
 						pagination: {
 							total: result.value.total,
-							current: searchParam.index,
+							current: searchParam.pageNum,
 							pageSize: 10,
 							showSizeChanger: false,
 
 							onChange: function onChange(current) {
 								var searchParam = {
-									appId: 0,
-									name: '',
-									index: current
+									pageNum: current
 								};
-								self.setState({
-									current: current
-								});
 								self.tableData(searchParam);
 							}
 						}
@@ -88,7 +84,7 @@ webpackJsonp([2],{
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement(_toolbar2.default, { current: this.state.current, refresh: this.state.refresh, tableData: this.state.tableData, getTableData: this.tableData })
+				_react2.default.createElement(_toolbar2.default, { refresh: this.state.refresh, tableData: this.state.tableData, getTableData: this.tableData })
 			);
 		}
 	});
@@ -135,10 +131,9 @@ webpackJsonp([2],{
 		componentDidMount: function componentDidMount() {
 
 			var searchParam = {
-				index: 1
+				pageNum: 1
 			};
 
-			searchParam.index = 1;
 			this.props.getTableData(searchParam);
 		},
 		add: function add(url) {
@@ -232,11 +227,11 @@ webpackJsonp([2],{
 
 	var _ajax2 = _interopRequireDefault(_ajax);
 
-	var _type = __webpack_require__(1693);
+	var _type = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./type\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 	var _type2 = _interopRequireDefault(_type);
 
-	var _reactRouter = __webpack_require__(1694);
+	var _reactRouter = __webpack_require__(1693);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -256,7 +251,6 @@ webpackJsonp([2],{
 					key: '1',
 					dataIndex: 'type',
 					render: function render(text, record) {
-						console.log(text);
 						var filter = _type2.default.filter(function (data) {
 							return data.type === text;
 						});
@@ -289,30 +283,6 @@ webpackJsonp([2],{
 		}
 	});
 	exports.render = HomeTable;
-
-/***/ },
-
-/***/ 1693:
-/***/ function(module, exports) {
-
-	'use strict';
-
-	module.exports = [{
-		type: 1,
-		type_desc: '单选题'
-	}, {
-		type: 2,
-		type_desc: '多选题'
-	}, {
-		type: 3,
-		type_desc: '名词解释'
-	}, {
-		type: 4,
-		type_desc: '简答题'
-	}, {
-		type: 5,
-		type_desc: '论述题'
-	}];
 
 /***/ }
 

@@ -5986,4 +5986,5 @@ a {
   height: 0.42rem;
 }
 
-/*# sourceMappingURL=antd-mobile.css.map*/body{width:100%; font-size: 0.32em; line-height: 1.15;}
+/*# sourceMappingURL=antd-mobile.css.map*/body{width:100%;  line-height: 1.15; background: #fff;}
+.mg_small{margin:0.16rem 0;}

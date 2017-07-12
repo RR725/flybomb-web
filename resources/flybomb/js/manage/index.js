@@ -22,7 +22,8 @@ const App = React.createClass({
 		const self = this;
 		
 		let url = restapi.questionList;
-		ajax.post(url, {}, function (result) {
+		
+		ajax.post(url, searchParam, function (result) {
 			console.log(result)
 			let data = result.value.result;
 			data.map(function (json, key) {
@@ -34,19 +35,14 @@ const App = React.createClass({
 					loading: false,
 					pagination: {
 						total: result.value.total,
-						current: searchParam.index,
+						current: searchParam.pageNum,
 						pageSize: 10,
 						showSizeChanger: false,
 						
 						onChange(current) {
 							let searchParam = {
-								appId: 0,
-								name: '',
-								index: current
+								pageNum: current
 							};
-							self.setState({
-								current: current
-							});
 							self.tableData(searchParam);
 
 						}
@@ -64,7 +60,7 @@ const App = React.createClass({
 	render() {
 		return (
 			<div>
-				<Toolbar  current={this.state.current} refresh={this.state.refresh} tableData={this.state.tableData} getTableData={this.tableData}  />
+				<Toolbar  refresh={this.state.refresh} tableData={this.state.tableData} getTableData={this.tableData}  />
 			</div>
 		);
 	}

@@ -27,7 +27,6 @@ const HomeTable = React.createClass({
 				key: '1',
 				dataIndex: 'type',
 				render(text, record) {
-					console.log(text)
 					let filter=questionType.filter(function (data) {
 						return data.type === text;
 					});
