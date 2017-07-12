@@ -30,7 +30,7 @@ let config = {
 			loader: 'babel',
 			query: {
 				presets: ['react', 'es2015'],
-				plugins: [["import", { libraryName: "antd-mobile", style: true }]]
+				plugins: [["import", { libraryName: "antd-mobile"}]]
 
 			}
 		}, {
