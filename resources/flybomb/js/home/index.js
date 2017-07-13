@@ -33,7 +33,24 @@ const Home = React.createClass({
 			});
 		});
 	},
+	randomDo() {
+		let url = restapi.questionList;
+		this.props.form.validateFields((errors, values) => {
 
+			let data = {
+				questionId: parseInt(values.question[0]),
+				type: parseInt(values.type[0])
+			};
+			console.log(data)
+			ajax.post(url,data,function(result){
+				console.log(result)
+			});
+		});
+
+	},
+	orderDo() {
+
+	},
 	render() {
 		const { getFieldProps } = this.props.form;
 		let type = questionType.map(function (data, key) {
@@ -42,23 +59,28 @@ const Home = React.createClass({
 				value: data.type
 			}
 		});
+		let subjectList = this.state.subjectList;
 		return (
 			<div style={{ padding: "0 0.16rem" }}>
 
 
-				<Picker data={this.state.subjectList} cols={1} {...getFieldProps('subject') }>
+				<Picker data={subjectList} cols={1} {...getFieldProps('question', {
+					initialValue: subjectList.length && [subjectList[0].value],
+				}) }>
 					<List.Item arrow="horizontal">科目</List.Item>
 				</Picker>
 				<WhiteSpace></WhiteSpace>
-				<Picker data={type} cols={1} {...getFieldProps('type') }>
+				<Picker data={type} cols={1} {...getFieldProps('type', {
+					initialValue: type.length && [type[0].value],
+				}) }>
 					<List.Item arrow="horizontal">题型</List.Item>
 				</Picker>
 
 
 				<WhiteSpace></WhiteSpace>
-				<Button className="btn ">随机刷题</Button>
+				<Button onClick={this.randomDo} className="btn ">随机刷题</Button>
 				<WhiteSpace></WhiteSpace>
-				<Button className="btn ">顺序刷题</Button>
+				<Button onClick={this.orderDo} className="btn ">顺序刷题</Button>
 			</div>
 		);
 	}

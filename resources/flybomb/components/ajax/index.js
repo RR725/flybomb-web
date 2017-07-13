@@ -1,13 +1,15 @@
 'use strict';
 import React from 'react';
 import { message  } from 'antd';
-import {get, post} from 'refetch';
-
+import refetch from 'refetch';
+refetch.setDefaultOptions({
+	dataType: "json"
+});
 
 const ajax = {
 	get: function (url, callback, errorCallback,options) {
 		let self = this;
-		get(url,{},options).then(function (result, xhr) {
+		refetch.get(url,{},options).then(function (result, xhr) {
 			// if (typeof result === 'string') {
 			// 	result = JSON.parse(result);
 			// }
@@ -38,7 +40,7 @@ const ajax = {
 
 		let self = this;
 
-		post(url, data).then(function (result, xhr) {
+		refetch.post(url, data).then(function (result, xhr) {
 			self.commonCallback(result, callback, errorCallback);
 		}).catch(function (error, response, xhr) {
 			consle.log('接口请求失败');

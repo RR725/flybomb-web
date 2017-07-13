@@ -32,6 +32,10 @@ let config = {
 			test: /\.less$/,
 			loader: 'style!css!less'
 		},
+		{ 
+			test: /\.svg$/, 
+			loader: "url-loader?limit=10000&mimetype=image/svg+xml" 
+		},
 		{
 			test: /\.css$/,
 			loader: ExtractTextPlugin.extract("style-loader", "css-loader")
@@ -43,7 +47,7 @@ let config = {
 		]
 	},
 	plugins: [
-		// new webpack.optimize.UglifyJsPlugin({ minimize: true }),
+		new webpack.optimize.UglifyJsPlugin({ minimize: true }),
 		new ExtractTextPlugin('resources/flybomb/dist/manage/common.css?ver=' + ver), //合并css文件
 		new HtmlWebpackPlugin({ //生成Html，自动把打包后的文件加到html中
 			title: 'flybomb',
