@@ -5,10 +5,14 @@ let webpack = require('webpack');
 let pkg = require('./package.json');
 let CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 
+let path = require('path');
 let HtmlWebpackPlugin = require('html-webpack-plugin');
 
 let ver = pkg.version;
-
+const svgDirs = [
+	require.resolve('antd-mobile').replace(/warn\.js$/, ''),  // 1. 属于 antd-mobile 内置 svg 文件
+	path.resolve(__dirname, 'resources/flybomb/svg'),  // 2. 自己私人的 svg 存放目录
+];
 let config = {
 	entry: {
 		main: './resources/flybomb/lib/mobile.js',
@@ -37,10 +41,10 @@ let config = {
 			test: /\.less$/,
 			loader: 'style!css!less'
 		},
-
-		{ 
-			test: /\.svg$/, 
-			loader: "url-loader?limit=10000&mimetype=image/svg+xml" 
+		{
+			test: /\.(svg)$/i,
+			loader: 'svg-sprite',
+			include: svgDirs,  // 把 svgDirs 路径下的所有 svg 文件交给 svg-sprite-loader 插件处理
 		},
 		{
 			test: /\.css$/,

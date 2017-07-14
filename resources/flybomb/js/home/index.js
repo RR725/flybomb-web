@@ -5,7 +5,7 @@ import { Picker, List, Button, WhiteSpace } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import restapi from '../../lib/url-model';
 import utils from '../../lib/utils';
-import ajax from '../../components/ajax';
+import ajax from '../../components/ajax/index-mobile';
 
 import questionType from '../question-type';
 

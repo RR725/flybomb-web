@@ -1,14 +1,14 @@
 'use strict';
-let babelpolyfill = require("babel-polyfill");
+// let babelpolyfill = require("babel-polyfill");
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
 let webpack = require('webpack');
 let CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
-
+let path=require('path');
 let HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const svgDirs = [
 	require.resolve('antd-mobile').replace(/warn\.js$/, ''),  // 1. 属于 antd-mobile 内置 svg 文件
-	// path.resolve(__dirname, 'src/my-project-svg-foler'),  // 2. 自己私人的 svg 存放目录
+	path.resolve(__dirname, 'resources/flybomb/svg'),  // 2. 自己私人的 svg 存放目录
 ];
 let config = {
 	entry: {

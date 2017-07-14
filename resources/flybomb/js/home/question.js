@@ -5,7 +5,7 @@ const RadioItem = Radio.RadioItem;
 import { createForm } from 'rc-form';
 import restapi from '../../lib/url-model';
 import utils from '../../lib/utils';
-import ajax from '../../components/ajax';
+import ajax from '../../components/ajax/index-mobile';
 
 import questionType from '../question-type';
 
@@ -88,9 +88,17 @@ const Question = React.createClass({
 					refreshing: false,
 					question: value
 				});
+
+				let dom = document.querySelector('#showQuestion');
+				dom.style.display = 'none';
 			}, 1000);
 		});
 
+	},
+	showQuestion() {
+		let dom = document.querySelector('#showQuestion');
+		let display = dom.style.display;
+		dom.style.display = display === '' ? 'none' : '';
 	},
 	render() {
 		let subject = utils.queryString('subject', window.location.href);
@@ -136,13 +144,16 @@ const Question = React.createClass({
 								</RadioItem>
 							))}
 						</List>
-						<List renderHeader={() => '解析'}>
-							<div style={{padding:'.5rem'}}>答案：{question.answer}</div>
-						</List>
-						<List>
-							<div style={{padding:'.2rem'}}>{question.point}</div>
-						</List>
-
+						<WhiteSpace></WhiteSpace>
+						<Button onClick={() => this.showQuestion()} className="btn ">查看答案</Button>
+						<div style={{ display: 'none' }} id="showQuestion">
+							<List renderHeader={() => '解析'}>
+								<div style={{ padding: '.3rem' }}>答案：{question.answer}</div>
+							</List>
+							<List>
+								<div style={{ lineHeight: '1.5', padding: '.3rem' }}>{question.point}</div>
+							</List>
+						</div>
 					</div>
 				</div>
 			);
@@ -158,7 +169,7 @@ const Question = React.createClass({
 				<ListView
 					dataSource={this.state.dataSource}
 					renderRow={row}
-					renderSeparator={separator}
+					// renderSeparator={separator}
 					initialListSize={5}
 					pageSize={5}
 					scrollRenderAheadDistance={200}
@@ -175,11 +186,7 @@ const Question = React.createClass({
 				/>
 
 
-				<NavBar leftContent="返回"
-					mode="light"
-					onLeftClick={() => this.back()}
-				>{subject}</NavBar>
-			
+
 
 				<TabBar
 					unselectedTintColor="#949494"
@@ -188,19 +195,11 @@ const Question = React.createClass({
 					hidden={this.state.hidden}
 				>
 					<TabBar.Item
-						title="下一题"
+						title="首页"
 						key="首页"
-						icon={<div style={{
-							width: '0.44rem',
-							height: '0.44rem',
-							background: 'url(https://zos.alipayobjects.com/rmsportal/sifuoDUQdAFKAVcFGROC.svg) center center /  0.42rem 0.42rem no-repeat'
-						}}
-						/>
-						}
+						icon={<Icon type={require('../../svg/home.svg')} />}
 						onPress={() => {
-							this.setState({
-								selectedTab: 'blueTab',
-							});
+							this.back();
 						}}
 						data-seed="logId"
 					>
