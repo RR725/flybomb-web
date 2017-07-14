@@ -86,7 +86,8 @@ const Question = React.createClass({
 				this.setState({
 					dataSource: this.state.dataSource.cloneWithRows(this.initData),
 					refreshing: false,
-					question: value
+					question: value,
+					value: null
 				});
 
 				let dom = document.querySelector('#showQuestion');
@@ -112,6 +113,7 @@ const Question = React.createClass({
 				label: data
 			}
 		});
+		let value = this.state.value;
 		let data = [question];
 		let index = data.length - 1;
 		const separator = (sectionID, rowID) => (
@@ -128,7 +130,14 @@ const Question = React.createClass({
 
 
 		const row = (rowData, sectionID, rowID) => {
-
+			let answers = ['A', 'B', 'C', 'D'];
+			let num = 0;
+			answers.map(function (data, key) {
+				if (data === question.answer) {
+					num = key;
+				}
+			});
+			let color = num === value ? 'green' : 'red';
 			return (
 				<div key={rowID}
 					style={{
@@ -138,9 +147,9 @@ const Question = React.createClass({
 				>
 					<div className="question_container">
 						<List renderHeader={() => question.title}>
-							{radioData.map(i => (
-								<RadioItem key={i.value} checked={value === i.value} onChange={() => this.onChange(i.value)}>
-									{i.label}
+							{radioData.map((data, key) => (
+								<RadioItem key={data.value} checked={value === data.value} onChange={() => this.onChange(data.value)}>
+									{answers[key]}、{data.label}
 								</RadioItem>
 							))}
 						</List>
@@ -148,7 +157,7 @@ const Question = React.createClass({
 						<Button onClick={() => this.showQuestion()} className="btn ">查看答案</Button>
 						<div style={{ display: 'none' }} id="showQuestion">
 							<List renderHeader={() => '解析'}>
-								<div style={{ padding: '.3rem' }}>答案：{question.answer}</div>
+								<div style={{ padding: '.3rem', color: color }}>答案：{question.answer}</div>
 							</List>
 							<List>
 								<div style={{ lineHeight: '1.5', padding: '.3rem' }}>{question.point}</div>
@@ -162,7 +171,6 @@ const Question = React.createClass({
 
 
 
-		const value = this.state.value;
 		return (
 			<div style={{ padding: "0 0.16rem" }}>
 
