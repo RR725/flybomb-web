@@ -1,6 +1,6 @@
 {
   "name": "flybomb",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "",
   "scripts": {
@@ -13,7 +13,6 @@
   "author": "ecofe",
   "license": "ISC",
   "dependencies": {
-    "refetch": "^0.2.0",
     "antd": "^2.11.2",
     "antd-mobile": "^1.4.1",
     "babel-plugin-import": "^1.2.1",
@@ -37,7 +36,9 @@
     "react-router": "^2.0.1",
     "react-router-loader": "^0.5.4",
     "react-sortable": "^1.2.0",
+    "refetch": "^0.2.0",
     "reflux": "^0.4.0",
+    "svg-sprite-loader": "^0.3.1",
     "webpack": "^1.12.14",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-dev-server": "^1.14.1"

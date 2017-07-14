@@ -34,21 +34,23 @@ const Home = React.createClass({
 		});
 	},
 	randomDo() {
+		let subjectList = this.state.subjectList;
 		let url = restapi.questionList;
 		this.props.form.validateFields((errors, values) => {
-
+			let subject = '';
+			subjectList.map(function (data, key) {
+				if (data.value === parseInt(values.subject[0])) {
+					subject = data.label;
+				}
+			});
 			let data = {
-				questionId: parseInt(values.question[0]),
+				subject: subject,
 				type: parseInt(values.type[0])
 			};
-			console.log(data)
-			ajax.post(url,data,function(result){
-				console.log(result)
-			});
-		});
 
-	},
-	orderDo() {
+
+			window.location.hash = '/home/question?subject=' + subject + '&type=' + values.type[0];
+		});
 
 	},
 	render() {
@@ -64,7 +66,7 @@ const Home = React.createClass({
 			<div style={{ padding: "0 0.16rem" }}>
 
 
-				<Picker data={subjectList} cols={1} {...getFieldProps('question', {
+				<Picker data={subjectList} cols={1} {...getFieldProps('subject', {
 					initialValue: subjectList.length && [subjectList[0].value],
 				}) }>
 					<List.Item arrow="horizontal">科目</List.Item>
@@ -79,8 +81,10 @@ const Home = React.createClass({
 
 				<WhiteSpace></WhiteSpace>
 				<Button onClick={this.randomDo} className="btn ">随机刷题</Button>
+				
+
 				<WhiteSpace></WhiteSpace>
-				<Button onClick={this.orderDo} className="btn ">顺序刷题</Button>
+				<Button onClick={this.randomDo} className="btn ">刷重点</Button>
 			</div>
 		);
 	}
