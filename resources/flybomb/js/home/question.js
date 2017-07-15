@@ -211,9 +211,11 @@ const Question = React.createClass({
 										color: color
 									}}>答案：{question.answer}</div>
 							</List>
-							<List>
-								<div style={{ lineHeight: '1.5', padding: '.3rem' }}>{question.point}</div>
-							</List>
+							{question.point &&
+								<List>
+									<div style={{ lineHeight: '1.5', padding: '.3rem' }}>{question.point}</div>
+								</List>
+							}
 						</div>
 					</div>
 				</div>
