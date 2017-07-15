@@ -129,7 +129,7 @@ let Add = React.createClass({
 				return <Row style={{ height: 44 }} key={key}><Col span="1">{data}</Col><Col span="23">
 
 					{getFieldDecorator('content_radio_' + data, {
-						initialValue: editData ? editData.content[key] : '',
+						initialValue: editData ? editData.content && editData.content[key] : '',
 						validate: [{
 							rules: [{
 								whitespace: true,
@@ -149,7 +149,7 @@ let Add = React.createClass({
 				return <Row style={{ height: 44 }} key={key} ><Col span="1">{data}</Col><Col span="23">
 
 					{getFieldDecorator('content_checkbox_' + data, {
-						initialValue: editData ? editData.content[key] : '',
+						initialValue: editData ? editData.content && editData.content[key] : '',
 						validate: [{
 							rules: [{
 								whitespace: true,

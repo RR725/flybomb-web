@@ -106,7 +106,7 @@ const Question = React.createClass({
 		let type = utils.queryString('type', window.location.href);
 		let question = this.state.question;
 		if (!question) return null;
-		let content = question.content;
+		let content = question.content || [];
 		let radioData = content.map((data, key) => {
 			return {
 				value: key,
