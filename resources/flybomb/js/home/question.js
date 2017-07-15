@@ -1,7 +1,9 @@
 'use strict';
 import React from 'react';
-import { Button, List, Radio, ListView, RefreshControl, TabBar, Icon, NavBar, WhiteSpace } from 'antd-mobile';
+import { Button, List, Radio, ListView, Checkbox, RefreshControl, TabBar, Icon, NavBar, WhiteSpace } from 'antd-mobile';
 const RadioItem = Radio.RadioItem;
+
+const CheckboxItem = Checkbox.CheckboxItem;
 import { createForm } from 'rc-form';
 import restapi from '../../lib/url-model';
 import utils from '../../lib/utils';
@@ -25,8 +27,8 @@ const Question = React.createClass({
 		for (let i = 0; i < 1; i++) {
 			this.initData.push(`r${i}`);
 		}
-		console.log(this.initData)
 		return {
+			checkboxValue: [],
 			subjectList: [],
 			dataSource: dataSource.cloneWithRows(this.initData),
 			refreshing: false,
@@ -47,9 +49,7 @@ const Question = React.createClass({
 			subject: subject,
 			type: parseInt(type)
 		};
-		console.log(data)
 		ajax.post(url, data, (result) => {
-			console.log(result);
 			if (callback) {
 				callback(result.value)
 			} else {
@@ -69,20 +69,47 @@ const Question = React.createClass({
 	},
 	getContainer() { },
 	onChange(value) {
+		let checkboxValue = this.state.checkboxValue;
+		let filterValue = checkboxValue.filter(function (data, key) {
+			return data !== value;
+		});
+		if (filterValue.length === checkboxValue.length) {
+			checkboxValue.push(value);
+		} else {
+			checkboxValue = filterValue;
+		}
+
+
+
+
+
+
+
+
+		let type = utils.queryString('type', window.location.href);
+		let data = value;
+		if (type === '2') {
+			let answers = ['A', 'B', 'C', 'D', 'E'];
+			let checkboxData = [];
+			checkboxValue.map(function (data, key) {
+				checkboxData.push(answers[data])
+			});
+			checkboxData.sort();
+			data = checkboxData.join(',');
+		}
 		this.setState({
-			value,
+			value: data,
+			checkboxValue: checkboxValue
 		});
 	},
 	back() {
 		window.location.hash = '/home';
 	},
 	onRefresh() {
-		console.log('onRefresh');
 		this.randomDo((value) => {
 			setTimeout(() => {
 				this.setState({ refreshing: true });
 				this.initData = [`ref${pageIndex++}`];//, ...this.initData
-				console.log(this.initData)
 				this.setState({
 					dataSource: this.state.dataSource.cloneWithRows(this.initData),
 					refreshing: false,
@@ -107,7 +134,7 @@ const Question = React.createClass({
 		let question = this.state.question;
 		if (!question) return null;
 		let content = question.content || [];
-		let radioData = content.map((data, key) => {
+		let contentData = content.map((data, key) => {
 			return {
 				value: key,
 				label: data
@@ -131,6 +158,13 @@ const Question = React.createClass({
 
 		const row = (rowData, sectionID, rowID) => {
 			let answers = ['A', 'B', 'C', 'D'];
+			let answerHtml = <List renderHeader={() => question.title}>
+				{contentData.map((data, key) => (
+					<RadioItem key={data.value} checked={value === data.value} onChange={() => this.onChange(data.value)}>
+						{answers[key]}、{data.label}
+					</RadioItem>
+				))}
+			</List>;
 			let num = 0;
 			answers.map(function (data, key) {
 				if (data === question.answer) {
@@ -138,6 +172,24 @@ const Question = React.createClass({
 				}
 			});
 			let color = num === value ? 'green' : 'red';
+			if (type === '2') {
+				answers.push('E');
+				answerHtml = <List renderHeader={() => question.title}>
+					{contentData.map((data, key) => (
+						<CheckboxItem key={data.value} onChange={() => this.onChange(data.value)}>
+							{answers[key]}、{data.label}
+						</CheckboxItem>
+					))}
+				</List>
+
+				color = question.answer === value ? 'green' : 'red';
+			}
+			if (type > 2) {
+				answerHtml = <List renderHeader={() => question.title}>
+					<div style={{ lineHeight: '1.5', padding: '.3rem' }} >{question.content[0]}</div>
+				</List>;
+				color = '#000';
+			}
 			return (
 				<div key={rowID}
 					style={{
@@ -146,18 +198,18 @@ const Question = React.createClass({
 					}}
 				>
 					<div className="question_container">
-						<List renderHeader={() => question.title}>
-							{radioData.map((data, key) => (
-								<RadioItem key={data.value} checked={value === data.value} onChange={() => this.onChange(data.value)}>
-									{answers[key]}、{data.label}
-								</RadioItem>
-							))}
-						</List>
+						{answerHtml}
 						<WhiteSpace></WhiteSpace>
 						<Button onClick={() => this.showQuestion()} className="btn ">查看答案</Button>
 						<div style={{ display: 'none' }} id="showQuestion">
 							<List renderHeader={() => '解析'}>
-								<div style={{ padding: '.3rem', color: color }}>答案：{question.answer}</div>
+								<div
+									style={{
+										padding: '.3rem',
+										wordBreak: 'break-all',
+										lineHeight: '1.5',
+										color: color
+									}}>答案：{question.answer}</div>
 							</List>
 							<List>
 								<div style={{ lineHeight: '1.5', padding: '.3rem' }}>{question.point}</div>
@@ -185,6 +237,7 @@ const Question = React.createClass({
 					style={{
 						height: document.documentElement.clientHeight,
 						margin: '0.1rem 0',
+
 					}}
 					scrollerOptions={{ scrollbars: true }}
 					refreshControl={<RefreshControl

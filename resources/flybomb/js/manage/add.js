@@ -265,7 +265,7 @@ let Add = React.createClass({
 
 			return <Select.Option key={key} value={String(data.type)}>{data.type_desc}</Select.Option>
 		});
-
+		console.log(type)
 		return (
 			<div >
 				<div className="home_toolbar">
@@ -344,7 +344,7 @@ let Add = React.createClass({
 
 								{this.getAnswer()}
 							</FormItem>
-							{type < 3 &&
+							{(editData && editData.type < 3) || type < 3 &&
 								<FormItem {...formItemLayout} label="要点透析" >
 
 									{getFieldDecorator('point', {
