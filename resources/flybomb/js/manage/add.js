@@ -46,9 +46,11 @@ let Add = React.createClass({
 		};
 		if (!obj.id) return;
 		ajax.post(restapi.questionFindOne, data, (result) => {
-			console.log(result)
 			this.setState({
 				editData: result.value
+			});
+			this.props.form.setFieldsValue({
+				type: String(result.value.type)
 			});
 		});
 	},
@@ -265,7 +267,7 @@ let Add = React.createClass({
 
 			return <Select.Option key={key} value={String(data.type)}>{data.type_desc}</Select.Option>
 		});
-		console.log(type)
+
 		return (
 			<div >
 				<div className="home_toolbar">
@@ -334,17 +336,18 @@ let Add = React.createClass({
 
 								})(<Input />)}
 							</FormItem>
-							<FormItem {...formItemLayout} label="内容" >
-								{this.getContent()}
-							</FormItem>
-
+							{type < 3 &&
+								<FormItem {...formItemLayout} label="内容" >
+									{this.getContent()}
+								</FormItem>
+							}
 
 
 							<FormItem {...formItemLayout} label="答案" >
 
 								{this.getAnswer()}
 							</FormItem>
-							{(editData && editData.type < 3) || type < 3 &&
+							{type < 3 &&
 								<FormItem {...formItemLayout} label="要点透析" >
 
 									{getFieldDecorator('point', {

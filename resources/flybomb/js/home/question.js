@@ -186,7 +186,7 @@ const Question = React.createClass({
 			}
 			if (type > 2) {
 				answerHtml = <List renderHeader={() => question.title}>
-					<div style={{ lineHeight: '1.5', padding: '.3rem' }} >{question.content[0]}</div>
+					
 				</List>;
 				color = '#000';
 			}
