@@ -41,6 +41,7 @@ const Question = React.createClass({
 		// setTimeout(() => this.setState({ refreshing: true }), 10);
 	},
 	randomDo(callback) {
+
 		let subject = utils.queryString('subject', window.location.href);
 		let type = utils.queryString('type', window.location.href);
 		let url = restapi.questionListRandom;
@@ -50,13 +51,19 @@ const Question = React.createClass({
 			type: parseInt(type)
 		};
 		ajax.post(url, data, (result) => {
+			let data = {
+				question: result.value
+			};
+			if (type === '2') {
+				for (let i = 0; i < 5; i++) {
+					data['checked' + i] = false;
+				}
+				data.checkboxValue=[];
+			}
 			if (callback) {
-				callback(result.value)
+				callback(result.value,data)
 			} else {
-
-				this.setState({
-					question: result.value
-				});
+				this.setState(data);
 			}
 		});
 
@@ -99,6 +106,7 @@ const Question = React.createClass({
 		}
 		this.setState({
 			value: data,
+			['checked' + value]: !this.state['checked' + value],
 			checkboxValue: checkboxValue
 		});
 	},
@@ -106,16 +114,18 @@ const Question = React.createClass({
 		window.location.hash = '/home';
 	},
 	onRefresh() {
-		this.randomDo((value) => {
+		this.randomDo((value,data) => {
 			setTimeout(() => {
 				this.setState({ refreshing: true });
 				this.initData = [`ref${pageIndex++}`];//, ...this.initData
-				this.setState({
+				let opt={
 					dataSource: this.state.dataSource.cloneWithRows(this.initData),
 					refreshing: false,
-					question: value,
+					// question: value,
 					value: null
-				});
+				};
+				Object.assign(opt,data);
+				this.setState(opt);
 
 				let dom = document.querySelector('#showQuestion');
 				dom.style.display = 'none';
@@ -176,17 +186,16 @@ const Question = React.createClass({
 				answers.push('E');
 				answerHtml = <List renderHeader={() => question.title}>
 					{contentData.map((data, key) => (
-						<CheckboxItem key={data.value} onChange={() => this.onChange(data.value)}>
+						<CheckboxItem key={data.value} checked={this.state['checked' + data.value]} onChange={() => this.onChange(data.value)}>
 							{answers[key]}、{data.label}
 						</CheckboxItem>
 					))}
 				</List>
-
 				color = question.answer === value ? 'green' : 'red';
 			}
 			if (type > 2) {
 				answerHtml = <List renderHeader={() => question.title}>
-					
+
 				</List>;
 				color = '#000';
 			}
