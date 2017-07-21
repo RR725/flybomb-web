@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import { Button, Row, Col, message, Checkbox, Radio, Select, Tooltip, Modal, Icon, Form, Input } from 'antd';
+import { Button, Row, Col, message, Checkbox, Radio, Select, Tag, Tooltip, Modal, Icon, Form, Input } from 'antd';
 const RadioGroup = Radio.Group;
 
 const FormItem = Form.Item;
@@ -22,6 +22,9 @@ let Add = React.createClass({
 	//{this.props.params.id}	
 	getInitialState() {
 		return {
+			tags: [],
+			inputVisible: false,
+			inputValue: '',
 			subjectList: [],
 			loading: false
 		};
@@ -46,8 +49,10 @@ let Add = React.createClass({
 		};
 		if (!obj.id) return;
 		ajax.post(restapi.questionFindOne, data, (result) => {
+			let value=result.value;
 			this.setState({
-				editData: result.value
+				editData: value,
+				tags:value.tags || []
 			});
 			this.props.form.setFieldsValue({
 				type: String(result.value.type)
@@ -99,6 +104,7 @@ let Add = React.createClass({
 				subject: values.subject,
 				content: content,
 				type: values.type,
+				tags:this.state.tags,
 				point: values.point || '',
 				answer: answer,
 				title: values.title
@@ -247,8 +253,38 @@ let Add = React.createClass({
 		})(html)
 		return dom;
 	},
+	handleClose(removedTag) {
+		const tags = this.state.tags.filter(tag => tag !== removedTag);
+		this.setState({ tags });
+	},
+
+	showInput() {
+		this.setState({ inputVisible: true }, () => this.input.focus());
+	},
+
+	handleInputChange(e) {
+		this.setState({ inputValue: e.target.value });
+	},
+
+	handleInputConfirm() {
+		const state = this.state;
+		const inputValue = state.inputValue;
+		let tags = state.tags;
+		if (inputValue && tags.indexOf(inputValue) === -1) {
+			tags = [...tags, inputValue];
+		}
+		this.setState({
+			tags,
+			inputVisible: false,
+			inputValue: '',
+		});
+	},
+	saveInputRef(input) {
+		this.input = input;
+	},
 	render() {
 
+		const { tags, inputVisible, inputValue } = this.state;
 
 		let type = this.props.form.getFieldValue('type');
 
@@ -356,7 +392,29 @@ let Add = React.createClass({
 									})(<Input type="textarea" rows={6} />)}
 								</FormItem>
 							}
-
+							<FormItem {...formItemLayout} label="标签" >
+								{tags.map((tag, index) => {
+									const tagElem = (
+										<Tag key={tag} closable={true} afterClose={() => this.handleClose(tag)}>
+											{ tag}
+										</Tag>
+									);
+									return  tagElem;
+								})}
+								{inputVisible && (
+									<Input
+										ref={this.saveInputRef}
+										type="text"
+										size="small"
+										style={{ width: 78 }}
+										value={inputValue}
+										onChange={this.handleInputChange}
+										onBlur={this.handleInputConfirm}
+										onPressEnter={this.handleInputConfirm}
+									/>
+								)}
+								{!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+ 新标签</Button>}
+							</FormItem>
 							<FormItem className="create_app"  {...formItemLayout} label="&nbsp;">
 								<Button type="primary" className="btn_normal_show color_bg" onClick={this.handleSubmit} size="large">{buttonText}</Button>
 
