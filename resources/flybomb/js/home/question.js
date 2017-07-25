@@ -29,6 +29,7 @@ const Question = React.createClass({
 		}
 		return {
 			checkboxValue: [],
+			recommendData: [],
 			subjectList: [],
 			dataSource: dataSource.cloneWithRows(this.initData),
 			refreshing: false,
@@ -40,32 +41,80 @@ const Question = React.createClass({
 		// this.manuallyRefresh = true;
 		// setTimeout(() => this.setState({ refreshing: true }), 10);
 	},
-	randomDo(callback) {
+	recommendQuestion() {
 
+		let questionId = utils.queryString('questionId', window.location.href);
+		ajax.post(restapi.questionFindOne, (result) => {
+			this.setState({
+				question: result.value
+			});
+		});
+	},
+	randomDo(callback) {
 		let subject = utils.queryString('subject', window.location.href);
 		let type = utils.queryString('type', window.location.href);
+		let questionId = utils.queryString('questionId', window.location.href);
 		let url = restapi.questionListRandom;
-
 		let data = {
 			subject: subject,
 			type: parseInt(type)
 		};
-		ajax.post(url, data, (result) => {
-			let data = {
-				question: result.value
+		if (callback && typeof callback === 'object') {
+
+			let pathname = window.location.pathname;
+			let hash = '/home/question';
+			hash = utils.makeUrl(hash, {
+				subject: callback.subject,
+				type: callback.type,
+				// questionId: callback.questionId
+			});
+			window.location.hash = hash;
+			url = restapi.questionFindOne;
+			data = {
+				questionId: callback.questionId
 			};
-			if (type === '2') {
-				for (let i = 0; i < 5; i++) {
-					data['checked' + i] = false;
+
+				let dom = document.querySelector('#showQuestion');
+				dom.style.display = 'none';
+
+		}
+
+		let self = this;
+		function* getData() {
+			let rdmData = yield ajax.post(url, data, (result) => {
+				let value = result.value;
+				let data = {
+					question: value
+				};
+				if (type === '2') {
+					for (let i = 0; i < 5; i++) {
+						data['checked' + i] = false;
+					}
+					data.checkboxValue = [];
 				}
-				data.checkboxValue=[];
-			}
-			if (callback) {
-				callback(result.value,data)
-			} else {
-				this.setState(data);
-			}
-		});
+				if (callback && typeof callback === 'function') {
+					callback(value, data)
+				} else {
+					self.initData = [`ref${pageIndex++}`];//用于刷新，避免rowHasChanged的值不改变
+					data.dataSource = self.state.dataSource.cloneWithRows(self.initData);
+					data.value = null;
+					self.setState(data);
+				}
+				gd.next(value);
+			});
+			ajax.post(restapi.questionRecommend, {
+				tags: rdmData.tags || [],
+				questionId: rdmData.questionId
+			}, (result) => {
+				self.setState({
+					recommendData: result.value
+				});
+			})
+		}
+
+		let gd = getData();
+		gd.next();
+
 
 	},
 	getRadio() {
@@ -95,6 +144,9 @@ const Question = React.createClass({
 
 		let type = utils.queryString('type', window.location.href);
 		let data = value;
+		let json = {
+			value: value
+		};
 		if (type === '2') {
 			let answers = ['A', 'B', 'C', 'D', 'E'];
 			let checkboxData = [];
@@ -103,28 +155,27 @@ const Question = React.createClass({
 			});
 			checkboxData.sort();
 			data = checkboxData.join(',');
+			json.value = data;
+			json['checked' + value] = !this.state['checked' + value];
+			json.checkboxValue = checkboxValue;
 		}
-		this.setState({
-			value: data,
-			['checked' + value]: !this.state['checked' + value],
-			checkboxValue: checkboxValue
-		});
+		this.setState(json);
 	},
 	back() {
 		window.location.hash = '/home';
 	},
 	onRefresh() {
-		this.randomDo((value,data) => {
+		this.randomDo((value, data) => {
 			setTimeout(() => {
 				this.setState({ refreshing: true });
 				this.initData = [`ref${pageIndex++}`];//, ...this.initData
-				let opt={
+				let opt = {
 					dataSource: this.state.dataSource.cloneWithRows(this.initData),
 					refreshing: false,
 					// question: value,
 					value: null
 				};
-				Object.assign(opt,data);
+				Object.assign(opt, data);
 				this.setState(opt);
 
 				let dom = document.querySelector('#showQuestion');
@@ -139,9 +190,11 @@ const Question = React.createClass({
 		dom.style.display = display === '' ? 'none' : '';
 	},
 	render() {
+		let self = this;
 		let subject = utils.queryString('subject', window.location.href);
 		let type = utils.queryString('type', window.location.href);
 		let question = this.state.question;
+		let recommendData = this.state.recommendData;
 		if (!question) return null;
 		let content = question.content || [];
 		let contentData = content.map((data, key) => {
@@ -225,6 +278,23 @@ const Question = React.createClass({
 									<div style={{ lineHeight: '1.5', padding: '.3rem' }}>{question.point}</div>
 								</List>
 							}
+						</div>
+						<div>
+							<List renderHeader={() => '相关推荐'}>
+								{recommendData.map(function (data, key) {
+
+									return <div
+										key={key}
+										onClick={() => self.randomDo(data)}
+										style={{
+											padding: '.3rem',
+											wordBreak: 'break-all',
+											borderBottom: '1px solid #ddd',
+											lineHeight: '1.5'
+										}}>{data.title}</div>
+								})}
+
+							</List>
 						</div>
 					</div>
 				</div>

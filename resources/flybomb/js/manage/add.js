@@ -45,7 +45,7 @@ let Add = React.createClass({
 		this.getList();
 		let obj = utils.getQueryObj(window.location.hash);
 		let data = {
-			id: obj.id
+			questionId: obj.questionId
 		};
 		if (!obj.id) return;
 		ajax.post(restapi.questionFindOne, data, (result) => {

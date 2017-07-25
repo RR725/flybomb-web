@@ -3,7 +3,7 @@
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
 let webpack = require('webpack');
 let CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
-let path=require('path');
+let path = require('path');
 let HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const svgDirs = [
@@ -34,7 +34,13 @@ let config = {
 			loader: 'babel',
 			query: {
 				presets: ['react', 'es2015'],
-				plugins: [["import", { libraryName: "antd-mobile" }]]
+				plugins: [
+					["import", { libraryName: "antd-mobile" }],
+					["transform-runtime", {
+						"polyfill": false,
+						"regenerator": true
+					}]
+				]
 
 			}
 		}, {

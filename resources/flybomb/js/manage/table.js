@@ -43,7 +43,7 @@ const HomeTable = React.createClass({
 				key: '3',
 				render(text, record) {
 					return (
-						<Link to={'/manage/add?id=' + record.questionId} >修改</Link>
+						<Link to={'/manage/add?questionId=' + record.questionId} >修改</Link>
 
 					);
 				},
