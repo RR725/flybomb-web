@@ -34,7 +34,13 @@ let config = {
 			loader: 'babel',
 			query: {
 				presets: ['react', 'es2015'],
-				plugins: [["import", { libraryName: "antd-mobile" }]]
+				plugins: [
+					["import", { libraryName: "antd-mobile" }],
+					["transform-runtime", {
+						"polyfill": false,
+						"regenerator": true
+					}]
+				]
 
 			}
 		}, {
