@@ -47,7 +47,7 @@ let Add = React.createClass({
 		let data = {
 			questionId: obj.questionId
 		};
-		if (!obj.id) return;
+		if (!obj.questionId) return;
 		ajax.post(restapi.questionFindOne, data, (result) => {
 			let value=result.value;
 			this.setState({
