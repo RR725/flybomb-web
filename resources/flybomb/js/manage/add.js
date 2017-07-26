@@ -76,7 +76,7 @@ let Add = React.createClass({
 	handleSubmit() {
 		let type = this.props.form.getFieldValue('type');
 		let obj = utils.getQueryObj(window.location.hash);
-		let id = obj.id;
+		let id = obj.questionId;
 		this.props.form.validateFields((errors, values) => {
 			let content = [],
 				answer = '';

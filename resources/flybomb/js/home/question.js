@@ -35,11 +35,21 @@ const Question = React.createClass({
 			refreshing: false,
 		};
 	},
+	componentWillReceiveProps() {
+		let type = utils.queryString('type', window.location.href);
+		if (type !== this.state.type && !this.state.status) {//用在点了相关推荐，且type值有变化，返回上一个页面
+			this.randomDo();
+		}
+
+	},
+
 	componentDidMount() {
+		let type = utils.queryString('type', window.location.href);
+		this.setState({
+			type: type
+		});
 		this.randomDo();
 
-		// this.manuallyRefresh = true;
-		// setTimeout(() => this.setState({ refreshing: true }), 10);
 	},
 	recommendQuestion() {
 
@@ -61,7 +71,9 @@ const Question = React.createClass({
 			type: parseInt(type)
 		};
 		if (callback && typeof callback === 'object') {
-
+			this.setState({
+				status: true
+			});
 			let pathname = window.location.pathname;
 			let hash = '/home/question';
 			hash = utils.makeUrl(hash, {
@@ -99,6 +111,7 @@ const Question = React.createClass({
 					self.initData = [`ref${pageIndex++}`];//用于刷新，避免rowHasChanged的值不改变
 					data.dataSource = self.state.dataSource.cloneWithRows(self.initData);
 					data.value = null;
+					data.status = false;
 					self.setState(data);
 				}
 				gd.next(value);
@@ -126,22 +139,6 @@ const Question = React.createClass({
 	},
 	getContainer() { },
 	onChange(value) {
-		let checkboxValue = this.state.checkboxValue;
-		let filterValue = checkboxValue.filter(function (data, key) {
-			return data !== value;
-		});
-		if (filterValue.length === checkboxValue.length) {
-			checkboxValue.push(value);
-		} else {
-			checkboxValue = filterValue;
-		}
-
-
-
-
-
-
-
 
 		let type = utils.queryString('type', window.location.href);
 		let data = value;
@@ -149,6 +146,15 @@ const Question = React.createClass({
 			value: value
 		};
 		if (type === '2') {
+			let checkboxValue = this.state.checkboxValue;
+			let filterValue = checkboxValue.filter(function (data, key) {
+				return data !== value;
+			});
+			if (filterValue.length === checkboxValue.length) {
+				checkboxValue.push(value);
+			} else {
+				checkboxValue = filterValue;
+			}
 			let answers = ['A', 'B', 'C', 'D', 'E'];
 			let checkboxData = [];
 			checkboxValue.map(function (data, key) {
@@ -285,7 +291,7 @@ const Question = React.createClass({
 						</div>
 						<div>
 							<List renderHeader={() => '相关推荐'}>
-								{recommendData.map(function (data, key) {
+								{recommendData.length ? recommendData.map(function (data, key) {
 
 									return <div
 										key={key}
@@ -296,7 +302,9 @@ const Question = React.createClass({
 											borderBottom: '1px solid #ddd',
 											lineHeight: '1.5'
 										}}>{data.title}</div>
-								})}
+								})
+									: <div style={{ lineHeight: '1.5', padding: '.3rem' }}>无</div>
+								}
 
 							</List>
 						</div>
