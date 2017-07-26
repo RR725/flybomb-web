@@ -52,6 +52,7 @@ const Question = React.createClass({
 	},
 	randomDo(callback) {
 		let subject = utils.queryString('subject', window.location.href);
+		subject = decodeURIComponent(subject);
 		let type = utils.queryString('type', window.location.href);
 		let questionId = utils.queryString('questionId', window.location.href);
 		let url = restapi.questionListRandom;
@@ -194,6 +195,7 @@ const Question = React.createClass({
 	render() {
 		let self = this;
 		let subject = utils.queryString('subject', window.location.href);
+		subject = decodeURIComponent(subject);
 		let type = utils.queryString('type', window.location.href);
 		let question = this.state.question;
 		let recommendData = this.state.recommendData;
