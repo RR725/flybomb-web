@@ -74,8 +74,8 @@ const Question = React.createClass({
 				questionId: callback.questionId
 			};
 
-				let dom = document.querySelector('#showQuestion');
-				dom.style.display = 'none';
+			let dom = document.querySelector('#showQuestion');
+			dom.style.display = 'none';
 
 		}
 
@@ -179,7 +179,9 @@ const Question = React.createClass({
 				this.setState(opt);
 
 				let dom = document.querySelector('#showQuestion');
-				dom.style.display = 'none';
+				if (dom) {
+					dom.style.display = 'none';
+				}
 			}, 1000);
 		});
 
