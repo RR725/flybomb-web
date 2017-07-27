@@ -75,6 +75,7 @@ let Add = React.createClass({
 	},
 	handleSubmit() {
 		let type = this.props.form.getFieldValue('type');
+		let subject = this.props.form.getFieldValue('subject');
 		let obj = utils.getQueryObj(window.location.hash);
 		let id = obj.questionId;
 		let tags = this.state.tags;
@@ -121,8 +122,16 @@ let Add = React.createClass({
 				});
 				return;
 			}
-			ajax.post(restapi.addQuestion, data, function () {
+			ajax.post(restapi.addQuestion, data, () => {
 				message.success('新建成功');
+				this.props.form.resetFields();
+				this.props.form.setFieldsValue({
+					type: type,
+					subject: subject
+				});
+				this.setState({
+					tags: []
+				});
 			});
 		});
 	},
