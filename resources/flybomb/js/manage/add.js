@@ -49,10 +49,10 @@ let Add = React.createClass({
 		};
 		if (!obj.questionId) return;
 		ajax.post(restapi.questionFindOne, data, (result) => {
-			let value=result.value;
+			let value = result.value;
 			this.setState({
 				editData: value,
-				tags:value.tags || []
+				tags: value.tags || []
 			});
 			this.props.form.setFieldsValue({
 				type: String(result.value.type)
@@ -77,6 +77,11 @@ let Add = React.createClass({
 		let type = this.props.form.getFieldValue('type');
 		let obj = utils.getQueryObj(window.location.hash);
 		let id = obj.questionId;
+		let tags = this.state.tags;
+		if (!tags.length) {
+			message.error('请至少填写一个标签');
+			return;
+		}
 		this.props.form.validateFields((errors, values) => {
 			let content = [],
 				answer = '';
@@ -104,7 +109,7 @@ let Add = React.createClass({
 				subject: values.subject,
 				content: content,
 				type: values.type,
-				tags:this.state.tags,
+				tags: tags,
 				point: values.point || '',
 				answer: answer,
 				title: values.title
@@ -289,7 +294,7 @@ let Add = React.createClass({
 		let type = this.props.form.getFieldValue('type');
 
 		let obj = utils.getQueryObj(window.location.hash);
-		let id = obj.id;
+		let id = obj.questionId;
 		let buttonText = id ? '修改' : '创建';
 		let editData = this.state.editData;
 
@@ -396,10 +401,10 @@ let Add = React.createClass({
 								{tags.map((tag, index) => {
 									const tagElem = (
 										<Tag key={tag} closable={true} afterClose={() => this.handleClose(tag)}>
-											{ tag}
+											{tag}
 										</Tag>
 									);
-									return  tagElem;
+									return tagElem;
 								})}
 								{inputVisible && (
 									<Input

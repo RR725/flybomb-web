@@ -89,7 +89,7 @@ const Question = React.createClass({
 
 			let dom = document.querySelector('#showQuestion');
 			dom.style.display = 'none';
-
+			document.body.scrollTop = 0;
 		}
 
 		let self = this;

@@ -34,7 +34,7 @@ const HomeTable = React.createClass({
 				}
 			}, {
 				title: '标题',
-				className: 'ta_c',
+				className: 'ta_l',
 				key: '2',
 				dataIndex: 'title'
 			}, {
