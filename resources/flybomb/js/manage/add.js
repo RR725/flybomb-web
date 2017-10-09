@@ -279,7 +279,30 @@ let Add = React.createClass({
 	handleInputChange(e) {
 		this.setState({ inputValue: e.target.value });
 	},
+	addTag() {
+		let type = this.props.form.getFieldValue('type');
+		let tags = this.state.tags;
+		if (type > 2) {
+			tags.push(this.props.form.getFieldValue('title'));
+		} else {
+			if (type < 2) {
 
+				let list = ['A', 'B', 'C', 'D'];
+				list.map((data) => {
+					tags.push(this.props.form.getFieldValue('content_radio_' + data));
+				});
+			} else {
+
+				let list = ['A', 'B', 'C', 'D', 'E'];
+				list.map((data) => {
+					tags.push(this.props.form.getFieldValue('content_checkbox_' + data));
+				});
+			}
+		}
+		this.setState({
+			tags: tags
+		});
+	},
 	handleInputConfirm() {
 		const state = this.state;
 		const inputValue = state.inputValue;
@@ -428,6 +451,7 @@ let Add = React.createClass({
 									/>
 								)}
 								{!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+ 新标签</Button>}
+								{type < 4 && <Button className="ml10" size="small" type="dashed" onClick={this.addTag}>快速打标签</Button>}
 							</FormItem>
 							<FormItem className="create_app"  {...formItemLayout} label="&nbsp;">
 								<Button type="primary" className="btn_normal_show color_bg" onClick={this.handleSubmit} size="large">{buttonText}</Button>
