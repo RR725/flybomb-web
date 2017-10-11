@@ -327,6 +327,7 @@ const Question = React.createClass({
 					pageSize={5}
 					scrollRenderAheadDistance={200}
 					scrollEventThrottle={20}
+					useBodyScroll={true}
 					style={{
 						height: document.documentElement.clientHeight,
 						margin: '0.1rem 0',
