@@ -49,7 +49,7 @@ const Question = React.createClass({
 			type: type
 		});
 		this.randomDo();
-
+		setTimeout(() => this.refs.lv.scrollTo(0, 0), 800); 
 	},
 	recommendQuestion() {
 
@@ -320,6 +320,7 @@ const Question = React.createClass({
 			<div style={{ padding: "0 0.16rem" }}>
 
 				<ListView
+					ref="lv"
 					dataSource={this.state.dataSource}
 					renderRow={row}
 					// renderSeparator={separator}
@@ -327,7 +328,7 @@ const Question = React.createClass({
 					pageSize={5}
 					scrollRenderAheadDistance={200}
 					scrollEventThrottle={20}
-					useBodyScroll={true}
+					// useBodyScroll={true}
 					style={{
 						height: document.documentElement.clientHeight,
 						margin: '0.1rem 0',
