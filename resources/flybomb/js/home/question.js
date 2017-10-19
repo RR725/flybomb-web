@@ -49,7 +49,7 @@ const Question = React.createClass({
 			type: type
 		});
 		this.randomDo();
-		setTimeout(() => this.refs.lv.scrollTo(0, 0), 800); 
+		// setTimeout(() => this.refs.lv.scrollTo(0, 0), 800); 
 	},
 	recommendQuestion() {
 
@@ -89,7 +89,8 @@ const Question = React.createClass({
 
 			let dom = document.querySelector('#showQuestion');
 			dom.style.display = 'none';
-			document.body.scrollTop = 0;
+			document.documentElement.scrollTop=0;
+			// document.body.scrollTop = 0;
 		}
 
 		let self = this;
