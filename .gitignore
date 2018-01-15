@@ -9,11 +9,6 @@ Thumbs.db
 *.swp
 *.swo
 *.log
-resources/js/
-resources/components/
-resources/css/
-resources/fonts/
-resources/lib/
+
 node_modules/
-lib/
 npm-debug.log
