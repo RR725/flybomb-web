@@ -14,4 +14,7 @@ module.exports = [{
 }, {
 	type: 5,
 	type_desc: '论述题'
+}, {
+	type: 6,
+	type_desc: '辨析题'
 }];
