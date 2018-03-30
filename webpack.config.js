@@ -7,7 +7,7 @@ let CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 
 let HtmlWebpackPlugin = require('html-webpack-plugin');
 
-let ver = pkg.version;
+let ver = +new Date();
 
 let config = {
 	entry: {

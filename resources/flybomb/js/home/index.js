@@ -13,7 +13,6 @@ import questionType from '../question-type';
 
 
 const Home = React.createClass({
-	//{this.props.params.id}	
 	getInitialState() {
 		return {
 			subjectList: []

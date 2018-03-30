@@ -17,7 +17,6 @@ import questionType from '../question-type';
 let pageIndex = 0;
 
 const Question = React.createClass({
-	//{this.props.params.id}	
 	getInitialState() {
 		const dataSource = new ListView.DataSource({
 			rowHasChanged: (row1, row2) => row1 !== row2,
