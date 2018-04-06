@@ -109,14 +109,11 @@ const Question = React.createClass({
 
 					self.setState({
 			        	question:errorList[rdm],
-			        	browserError:window.indexedDB?'none':''
+			        	browserError:window.indexedDB?'none':'',
+						errorTotal:len
 			        })
 				}
-				if(len===1){
-					self.setState({
-						errorTotal:len
-					});
-				}
+				
 		        
 		    }
 		};
@@ -371,6 +368,7 @@ const Question = React.createClass({
 		let value = this.state.value;
 		let data = [question];
 		let index = data.length - 1;
+		const errorTotal=this.state.errorTotal;
 		const separator = (sectionID, rowID) => (
 			<div
 				key={`${sectionID}-${rowID}`}
@@ -429,7 +427,7 @@ const Question = React.createClass({
 						<WhiteSpace></WhiteSpace>
 						<Flex>
 							<Flex.Item><Button onClick={() => this.showQuestion()} className="btn ">查看答案</Button></Flex.Item>
-							<Flex.Item><Button disabled={this.state.errorTotal===1?true:false} onClick={() => this.nextQuestion()} className="btn ">下一个</Button></Flex.Item>
+							<Flex.Item><Button disabled={errorTotal===1?true:false} onClick={() => this.nextQuestion()} className="btn ">下一个</Button></Flex.Item>
 					    </Flex>
 						
 						<div style={{ display: 'none' }} id="showQuestion">
@@ -449,7 +447,13 @@ const Question = React.createClass({
 							}
 						</div>
 						<div>
-						{this.state.errorTotal?<div style={{marginTop:20}}>恭喜你！已经是最后一个错题了～</div>
+						{errorTotal?
+							<div style={{marginTop:20}}>
+								{errorTotal===1?
+									<span>恭喜你！已经是最后一个错题了～</span>
+									:<span>还有错题<span style={{color:'red'}}> {errorTotal} </span>个，加油～</span>
+								}
+							</div>
 							:
 							err!=='true' &&
 							<List renderHeader={() => '相关推荐'}>
