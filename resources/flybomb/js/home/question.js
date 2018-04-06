@@ -118,6 +118,7 @@ const Question = React.createClass({
 			});
 			ajax.post(restapi.questionRecommend, {
 				tags: rdmData.tags || [],
+				subject:rdmData.subject,
 				questionId: rdmData.questionId
 			}, (result) => {
 				self.setState({
