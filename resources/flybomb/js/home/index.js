@@ -39,7 +39,7 @@ const Home = React.createClass({
 			let subject = '';
 			subjectList.map(function (data, key) {
 				if (data.value === parseInt(values.subject[0])) {
-					subject = data.label;
+					subject = data.value;
 				}
 			});
 			let data = {

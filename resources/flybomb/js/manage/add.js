@@ -73,6 +73,11 @@ let Add = React.createClass({
 
 		})(html);
 	},
+	changeSubject(value,options){
+		this.setState({
+			subjectId:options.props.data.subjectId
+		});
+	},
 	handleSubmit() {
 		let type = this.props.form.getFieldValue('type');
 		let subject = this.props.form.getFieldValue('subject');
@@ -108,6 +113,7 @@ let Add = React.createClass({
 			}
 			const data = {
 				subject: values.subject,
+				subjectId:this.state.subjectId,
 				content: content,
 				type: values.type,
 				tags: tags,
@@ -334,7 +340,7 @@ let Add = React.createClass({
 		var self = this;
 		let subjectList = this.state.subjectList;
 		let options = subjectList.map(function (data, key) {
-			return <Select.Option key={key} value={data.name}>{data.name}</Select.Option>
+			return <Select.Option key={key} data={data} value={data.name}>{data.name}</Select.Option>
 		});
 		let typeOptions = questionType.map(function (data, key) {
 
@@ -372,7 +378,7 @@ let Add = React.createClass({
 									}]
 
 								})(
-									<Select style={{ width: 300 }}>
+									<Select onSelect={this.changeSubject} style={{ width: 300 }}>
 										{options}
 									</Select>
 									)}

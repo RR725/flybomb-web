@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import { Button, List, Radio, ListView, Checkbox, RefreshControl, TabBar, Icon, NavBar, WhiteSpace } from 'antd-mobile';
+import { Button, List, Radio, ListView, Checkbox, Flex, RefreshControl, TabBar, Icon, NavBar, WhiteSpace } from 'antd-mobile';
 const RadioItem = Radio.RadioItem;
 
 const CheckboxItem = Checkbox.CheckboxItem;
@@ -66,7 +66,7 @@ const Question = React.createClass({
 		let questionId = utils.queryString('questionId', window.location.href);
 		let url = restapi.questionListRandom;
 		let data = {
-			subject: subject,
+			subject: Number(subject),
 			type: parseInt(type)
 		};
 		if (callback && typeof callback === 'object') {
@@ -141,11 +141,20 @@ const Question = React.createClass({
 	getContainer() { },
 	onChange(value) {
 
+		let answers = ['A', 'B', 'C', 'D'];
+		let question = this.state.question;
+		console.log(this.state.question)
+		let answer = answers[value];
+		console.log(answer)
 		let type = utils.queryString('type', window.location.href);
 		let data = value;
 		let json = {
 			value: value
 		};
+		console.log(localStorage)
+		if(question.answer===answer){
+
+		}
 		if (type === '2') {
 			let checkboxValue = this.state.checkboxValue;
 			let filterValue = checkboxValue.filter(function (data, key) {
@@ -273,7 +282,11 @@ const Question = React.createClass({
 					<div className="question_container">
 						{answerHtml}
 						<WhiteSpace></WhiteSpace>
-						<Button onClick={() => this.showQuestion()} className="btn ">查看答案</Button>
+						<Flex>
+							<Flex.Item><Button onClick={() => this.showQuestion()} className="btn ">查看答案</Button></Flex.Item>
+							<Flex.Item><Button onClick={() => this.randomDo()} className="btn ">下一个</Button></Flex.Item>
+					    </Flex>
+						
 						<div style={{ display: 'none' }} id="showQuestion">
 							<List renderHeader={() => '解析'}>
 								<div
