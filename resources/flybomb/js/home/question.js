@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import { Button, List, Radio, ListView, Checkbox, Flex, RefreshControl, TabBar, Icon, NavBar, WhiteSpace } from 'antd-mobile';
+import { Button, List, Radio, ListView, Checkbox, Flex, TabBar, Icon, NavBar, WhiteSpace } from 'antd-mobile';
 const RadioItem = Radio.RadioItem;
 
 const CheckboxItem = Checkbox.CheckboxItem;
@@ -11,7 +11,7 @@ import ajax from '../../components/ajax/index-mobile';
 
 import questionType from '../question-type';
 
-
+let db;
 
 
 let pageIndex = 0;
@@ -28,6 +28,7 @@ const Question = React.createClass({
 		}
 		return {
 			checkboxValue: [],
+			errorList:[],//错题集
 			recommendData: [],
 			subjectList: [],
 			dataSource: dataSource.cloneWithRows(this.initData),
@@ -59,8 +60,71 @@ const Question = React.createClass({
 			});
 		});
 	},
+	getErrQuestion(event){
+		const self=this;
+		var dbName = 'SHUASHUADB', version = 1, db;
+		var request = window.indexedDB && window.indexedDB.open(dbName, version);
+		let table='flyblom';
+		db = event.target.result;
+	    // console.log(event.target === request); // true
+	    db.onsuccess = function(event) {
+	        console.log('数据库操作成功!');
+
+	    };
+	    db.onerror = function(event) {
+	        console.error('数据库操作发生错误！', event.target.errorCode);
+	    };
+	    console.log('打开数据库成功!');
+	    var transaction = db.transaction([table], 'readwrite');
+		transaction.oncomplete = function(event) {
+		    console.log('事务完成！');
+
+		};
+		transaction.onerror = function(event) {
+		    console.log('事务失败！', event.target.errorCode);
+		};
+		transaction.onabort = function(event) {
+		    console.log('事务回滚！');
+		};
+		var list = [];
+		var objectStore = transaction.objectStore(table);
+		objectStore.openCursor().onsuccess = function(event) {
+		    var cursor = event.target.result;
+		    if (cursor) {
+		        list.push(cursor.value);
+		        cursor.continue();
+		    } else {
+
+				let subject = utils.queryString('subject', window.location.href);
+				let errorList=[];
+				list.map(function(data){
+					if(data.subjectId==subject){
+						errorList.push(data);
+					}
+				});
+				let len=errorList.length;
+				if(len){
+					let rdm=Math.floor(Math.random()*len);
+					self.setState({
+			        	question:errorList[rdm]
+			        })
+				}
+		        
+		    }
+		};
+
+
+	},
 	randomDo(callback) {
+		const self=this;
 		let subject = utils.queryString('subject', window.location.href);
+		let err = utils.queryString('err', window.location.href);
+		if(err==='true'){
+			this.openDB(function(event){
+				self.getErrQuestion(event);
+			});
+			return;
+		}
 		subject = decodeURIComponent(subject);
 		let type = utils.queryString('type', window.location.href);
 		let questionId = utils.queryString('questionId', window.location.href);
@@ -92,7 +156,6 @@ const Question = React.createClass({
 			// document.body.scrollTop = 0;
 		}
 
-		let self = this;
 		function* getData() {
 			let rdmData = yield ajax.post(url, data, (result) => {
 				let value = result.value;
@@ -139,21 +202,86 @@ const Question = React.createClass({
 
 	},
 	getContainer() { },
-	onChange(value) {
+	openDB(callback){
+		if(!window.indexedDB) return;
+		let self=this;
+		var dbName = 'SHUASHUADB', version = 1;
+		var request = window.indexedDB && window.indexedDB.open(dbName, version);
+		let table='flyblom';
+		request.onerror = function(event) {
+		    console.error('创建数据库出错');
+		    console.error('error code:', event.target.errorCode);
+		};
+		request.onupgradeneeded = function(event) { // 更新对象存储空间和索引 .... 
+		    var database = event.target.result;
+		    var objectStore = database.createObjectStore(table, { keyPath: "questionId" });
+		    objectStore.createIndex('subjectId', 'subjectId', { unique: false });
+		};
+		request.onsuccess = function(event) {
+		   
+		   callback(event);
+		};
 
+	},
+	setErrQuestion(event,option,type){
+		let table='flyblom';
+		db = event.target.result;
+	    // console.log(event.target === request); // true
+	    db.onsuccess = function(event) {
+	        console.log('数据库操作成功!');
+
+	    };
+	    db.onerror = function(event) {
+	        console.error('数据库操作发生错误！', event.target.errorCode);
+	    };
+	    console.log('打开数据库成功!');
+	    var transaction = db.transaction([table], 'readwrite');
+		transaction.oncomplete = function(event) {
+		    console.log('事务完成！');
+
+		};
+		transaction.onerror = function(event) {
+		    console.log('事务失败！', event.target.errorCode);
+		};
+		transaction.onabort = function(event) {
+		    console.log('事务回滚！');
+		};
+		var objectStore = transaction.objectStore(table);  // 指定对象存储空间
+		if(type==='add'){
+			 var request = objectStore.add(option);
+		    request.onsuccess = function(event) {
+		        console.log(event.target.result, option.questionId); // add()方法调用成功后result是被添加的值的键(id)
+		    };
+		}else{
+			if(!option) return;
+			var request =  transaction
+				.objectStore(table)
+				.delete(option.questionId);  // 通过键questionId来删除
+			request.onsuccess = function(event) {
+			    console.log('删除成功！');
+			    console.log(event.target.result);
+			};
+		}
+	},
+	onChange(value) {
 		let answers = ['A', 'B', 'C', 'D'];
 		let question = this.state.question;
-		console.log(this.state.question)
+		const self=this;
 		let answer = answers[value];
-		console.log(answer)
 		let type = utils.queryString('type', window.location.href);
 		let data = value;
 		let json = {
-			value: value
+			value: value,
+			disabled:true
 		};
-		console.log(localStorage)
 		if(question.answer===answer){
-
+			this.openDB(function(event){
+				self.setErrQuestion(event,question,'delete');
+			});
+		}else{
+			this.openDB(function(event){
+				self.setErrQuestion(event,question,'add');
+			});
 		}
 		if (type === '2') {
 			let checkboxValue = this.state.checkboxValue;
@@ -181,32 +309,40 @@ const Question = React.createClass({
 	back() {
 		window.location.hash = '/home';
 	},
-	onRefresh() {
-		this.randomDo((value, data) => {
-			setTimeout(() => {
-				this.setState({ refreshing: true });
-				this.initData = [`ref${pageIndex++}`];//, ...this.initData
-				let opt = {
-					dataSource: this.state.dataSource.cloneWithRows(this.initData),
-					refreshing: false,
-					// question: value,
-					value: null
-				};
-				Object.assign(opt, data);
-				this.setState(opt);
+	// onRefresh() {
+	// 	this.randomDo((value, data) => {
+	// 		setTimeout(() => {
+	// 			this.setState({ refreshing: true });
+	// 			this.initData = [`ref${pageIndex++}`];//, ...this.initData
+	// 			let opt = {
+	// 				dataSource: this.state.dataSource.cloneWithRows(this.initData),
+	// 				refreshing: false,
+	// 				// question: value,
+	// 				value: null
+	// 			};
+	// 			Object.assign(opt, data);
+	// 			this.setState(opt);
 
-				let dom = document.querySelector('#showQuestion');
-				if (dom) {
-					dom.style.display = 'none';
-				}
-			}, 1000);
-		});
+	// 			let dom = document.querySelector('#showQuestion');
+	// 			if (dom) {
+	// 				dom.style.display = 'none';
+	// 			}
+	// 		}, 1000);
+	// 	});
 
-	},
-	showQuestion() {
+	// },
+	showQuestion(type) {
 		let dom = document.querySelector('#showQuestion');
 		let display = dom.style.display;
-		dom.style.display = display === '' ? 'none' : '';
+		dom.style.display = type === 'show'?'none': display === '' ? 'none' : '';
+	},
+	nextQuestion(){
+		this.showQuestion('show');
+		this.randomDo();
+		this.setState({
+			value:null,
+			disabled:false
+		});
 	},
 	render() {
 		let self = this;
@@ -215,7 +351,7 @@ const Question = React.createClass({
 		let type = utils.queryString('type', window.location.href);
 		let question = this.state.question;
 		let recommendData = this.state.recommendData;
-		if (!question) return null;
+		if (!question) return <div style={{marginTop:30}} className="ta_c">无数据！</div>;
 		let content = question.content || [];
 		let contentData = content.map((data, key) => {
 			return {
@@ -243,7 +379,7 @@ const Question = React.createClass({
 			let answers = ['A', 'B', 'C', 'D'];
 			let answerHtml = <List renderHeader={() => question.title}>
 				{contentData.map((data, key) => (
-					<RadioItem key={data.value} checked={value === data.value} onChange={() => this.onChange(data.value)}>
+					<RadioItem disabled={this.state.disabled} key={data.value} checked={value === data.value} onChange={() => this.onChange(data.value)}>
 						{answers[key]}、{data.label}
 					</RadioItem>
 				))}
@@ -259,7 +395,7 @@ const Question = React.createClass({
 				answers.push('E');
 				answerHtml = <List renderHeader={() => question.title}>
 					{contentData.map((data, key) => (
-						<CheckboxItem key={data.value} checked={this.state['checked' + data.value]} onChange={() => this.onChange(data.value)}>
+						<CheckboxItem disabled={this.state.disabled} key={data.value} checked={this.state['checked' + data.value]} onChange={() => this.onChange(data.value)}>
 							{answers[key]}、{data.label}
 						</CheckboxItem>
 					))}
@@ -284,7 +420,7 @@ const Question = React.createClass({
 						<WhiteSpace></WhiteSpace>
 						<Flex>
 							<Flex.Item><Button onClick={() => this.showQuestion()} className="btn ">查看答案</Button></Flex.Item>
-							<Flex.Item><Button onClick={() => this.randomDo()} className="btn ">下一个</Button></Flex.Item>
+							<Flex.Item><Button onClick={() => this.nextQuestion()} className="btn ">下一个</Button></Flex.Item>
 					    </Flex>
 						
 						<div style={{ display: 'none' }} id="showQuestion">
@@ -349,10 +485,10 @@ const Question = React.createClass({
 
 					}}
 					scrollerOptions={{ scrollbars: true }}
-					refreshControl={<RefreshControl
-						refreshing={this.state.refreshing}
-						onRefresh={this.onRefresh}
-					/>}
+					// refreshControl={<RefreshControl
+					// 	refreshing={this.state.refreshing}
+					// 	onRefresh={this.onRefresh}
+					// />}
 				/>
 
 

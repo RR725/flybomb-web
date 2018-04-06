@@ -32,7 +32,7 @@ const Home = React.createClass({
 			});
 		});
 	},
-	randomDo() {
+	randomDo(type) {
 		let subjectList = this.state.subjectList;
 		let url = restapi.questionList;
 		this.props.form.validateFields((errors, values) => {
@@ -46,9 +46,16 @@ const Home = React.createClass({
 				subject: subject,
 				type: parseInt(values.type[0])
 			};
+			let json={
+				subject:subject,
+				type:values.type[0]
 
+			};
+			if(type === 'err'){
+				json.err = true;
+			}
 
-			window.location.hash = '/home/question?subject=' + subject + '&type=' + values.type[0];
+			window.location.hash = utils.makeUrl('/home/question',json);
 		});
 
 	},
@@ -83,7 +90,7 @@ const Home = React.createClass({
 				
 
 				<WhiteSpace></WhiteSpace>
-				<Button onClick={this.randomDo} className="btn ">刷重点</Button>
+				<Button onClick={()=>this.randomDo('err')} className="btn ">错题集</Button>
 			</div>
 		);
 	}
