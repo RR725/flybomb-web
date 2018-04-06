@@ -28,6 +28,7 @@ const Question = React.createClass({
 		}
 		return {
 			checkboxValue: [],
+			browserError:'none',
 			errorList:[],//错题集
 			recommendData: [],
 			subjectList: [],
@@ -105,9 +106,16 @@ const Question = React.createClass({
 				let len=errorList.length;
 				if(len){
 					let rdm=Math.floor(Math.random()*len);
+
 					self.setState({
-			        	question:errorList[rdm]
+			        	question:errorList[rdm],
+			        	browserError:window.indexedDB?'none':''
 			        })
+				}
+				if(len===1){
+					self.setState({
+						errorTotal:len
+					});
 				}
 		        
 		    }
@@ -347,11 +355,12 @@ const Question = React.createClass({
 	render() {
 		let self = this;
 		let subject = utils.queryString('subject', window.location.href);
+		let err = utils.queryString('err', window.location.href);
 		subject = decodeURIComponent(subject);
 		let type = utils.queryString('type', window.location.href);
 		let question = this.state.question;
 		let recommendData = this.state.recommendData;
-		if (!question) return <div style={{marginTop:30}} className="ta_c">无数据！</div>;
+		if (!question) return <div style={{marginTop:30}} className="ta_c">无数据！<p style={{display:this.state.browserError,fontSize:12,color:'#f60'}}>想查看错题集请使用Chrome浏览器进行访问，谢谢～</p></div>;
 		let content = question.content || [];
 		let contentData = content.map((data, key) => {
 			return {
@@ -420,7 +429,7 @@ const Question = React.createClass({
 						<WhiteSpace></WhiteSpace>
 						<Flex>
 							<Flex.Item><Button onClick={() => this.showQuestion()} className="btn ">查看答案</Button></Flex.Item>
-							<Flex.Item><Button onClick={() => this.nextQuestion()} className="btn ">下一个</Button></Flex.Item>
+							<Flex.Item><Button disabled={this.state.errorTotal===1?true:false} onClick={() => this.nextQuestion()} className="btn ">下一个</Button></Flex.Item>
 					    </Flex>
 						
 						<div style={{ display: 'none' }} id="showQuestion">
@@ -440,6 +449,9 @@ const Question = React.createClass({
 							}
 						</div>
 						<div>
+						{this.state.errorTotal?<div style={{marginTop:20}}>恭喜你！已经是最后一个错题了～</div>
+							:
+							err!=='true' &&
 							<List renderHeader={() => '相关推荐'}>
 								{recommendData.length ? recommendData.map(function (data, key) {
 
@@ -457,6 +469,7 @@ const Question = React.createClass({
 								}
 
 							</List>
+							}
 						</div>
 					</div>
 				</div>
