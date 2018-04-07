@@ -115,6 +115,10 @@ const Question = React.createClass({
 						errorTotal: len
 			        }
 				}
+
+				self.initData = [`ref${pageIndex++}`];//用于刷新，避免rowHasChanged的值不改变
+				json.dataSource = self.state.dataSource.cloneWithRows(self.initData);
+
 				self.setState(json);
 		        
 		    }
@@ -436,6 +440,7 @@ const Question = React.createClass({
 				</List>;
 				color = '#000';
 			}
+
 			return (
 				<div key={rowID}
 					style={{
@@ -514,15 +519,15 @@ const Question = React.createClass({
 					// renderSeparator={separator}
 					initialListSize={5}
 					pageSize={5}
-					scrollRenderAheadDistance={200}
-					scrollEventThrottle={20}
+					// scrollRenderAheadDistance={200}
+					// scrollEventThrottle={20}
 					// useBodyScroll={true}
 					style={{
 						height: document.documentElement.clientHeight,
 						margin: '0.1rem 0',
 
 					}}
-					scrollerOptions={{ scrollbars: true }}
+					// scrollerOptions={{ scrollbars: true }}
 					// refreshControl={<RefreshControl
 					// 	refreshing={this.state.refreshing}
 					// 	onRefresh={this.onRefresh}
