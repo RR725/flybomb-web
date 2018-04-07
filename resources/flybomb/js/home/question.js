@@ -29,7 +29,6 @@ const Question = React.createClass({
 		return {
 			checkboxValue: [],
 			browserError:'none',
-			errorList:[],//错题集
 			recommendData: [],
 			subjectList: [],
 			dataSource: dataSource.cloneWithRows(this.initData),
@@ -97,23 +96,26 @@ const Question = React.createClass({
 		    } else {
 
 				let subject = utils.queryString('subject', window.location.href);
+				let type = utils.queryString('type', window.location.href);
 				let errorList=[];
 				list.map(function(data){
-					if(data.subjectId==subject){
+					if(data.subjectId==subject && data.type==type ){
 						errorList.push(data);
 					}
 				});
 				let len=errorList.length;
-				if(len){
-					let rdm=Math.floor(Math.random()*len);
-
-					self.setState({
-			        	question:errorList[rdm],
-			        	browserError:window.indexedDB?'none':'',
-						errorTotal:len
-			        })
+				let json={
+					question:{}
 				}
-				
+				if(len){
+					let rdm = Math.floor(Math.random()*len);
+					json = {
+			        	question: errorList[rdm],
+			        	browserError: window.indexedDB?'none':'',
+						errorTotal: len
+			        }
+				}
+				self.setState(json);
 		        
 		    }
 		};
@@ -276,8 +278,7 @@ const Question = React.createClass({
 		let type = utils.queryString('type', window.location.href);
 		let data = value;
 		let json = {
-			value: value,
-			disabled:true
+			value: value
 		};
 		if(question.answer===answer){
 			this.openDB(function(event){
@@ -340,6 +341,9 @@ const Question = React.createClass({
 		let dom = document.querySelector('#showQuestion');
 		let display = dom.style.display;
 		dom.style.display = type === 'show'?'none': display === '' ? 'none' : '';
+		this.setState({
+			disabled:true
+		});
 	},
 	nextQuestion(){
 		this.showQuestion('show');
@@ -357,7 +361,9 @@ const Question = React.createClass({
 		let type = utils.queryString('type', window.location.href);
 		let question = this.state.question;
 		let recommendData = this.state.recommendData;
-		if (!question) return <div style={{marginTop:30}} className="ta_c">无数据！<p style={{display:this.state.browserError,fontSize:12,color:'#f60'}}>想查看错题集请使用Chrome浏览器进行访问，谢谢～</p></div>;
+		console.log(question)
+		if (!question) return null;
+		if (!question.questionId) return <div style={{marginTop:30}} className="ta_c">无数据！<p style={{display:this.state.browserError,fontSize:12,color:'#f60'}}>想查看错题集请使用Chrome浏览器进行访问，谢谢～</p></div>;
 		let content = question.content || [];
 		let contentData = content.map((data, key) => {
 			return {
@@ -427,7 +433,7 @@ const Question = React.createClass({
 						<WhiteSpace></WhiteSpace>
 						<Flex>
 							<Flex.Item><Button onClick={() => this.showQuestion()} className="btn ">查看答案</Button></Flex.Item>
-							<Flex.Item><Button disabled={errorTotal===1?true:false} onClick={() => this.nextQuestion()} className="btn ">下一个</Button></Flex.Item>
+							<Flex.Item><Button disabled={errorTotal === 1 ? true : false} onClick={() => this.nextQuestion()} className="btn ">下一个</Button></Flex.Item>
 					    </Flex>
 						
 						<div style={{ display: 'none' }} id="showQuestion">

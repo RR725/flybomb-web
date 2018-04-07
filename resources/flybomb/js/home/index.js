@@ -61,6 +61,9 @@ const Home = React.createClass({
 	},
 	render() {
 		const { getFieldProps } = this.props.form;
+		let typeNum=this.props.form.getFieldValue('type');
+		typeNum = typeNum && typeNum[0];
+		console.log()
 		let type = questionType.map(function (data, key) {
 			return {
 				label: data.type_desc,
@@ -90,7 +93,9 @@ const Home = React.createClass({
 				
 
 				<WhiteSpace></WhiteSpace>
-				<Button onClick={()=>this.randomDo('err')} className="btn ">错题集</Button>
+				{typeNum < 3 && 
+					<Button onClick={()=>this.randomDo('err')} className="btn ">错题集</Button>
+				}
 			</div>
 		);
 	}
