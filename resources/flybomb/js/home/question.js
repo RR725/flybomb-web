@@ -282,15 +282,10 @@ const Question = React.createClass({
 		let json = {
 			value: value
 		};
-		if(question.answer===answer){
-			this.openDB(function(event){
-				self.setErrQuestion(event,question,'delete');
-			});
-		}else{
-			this.openDB(function(event){
-				self.setErrQuestion(event,question,'add');
-			});
-		}
+		console.log(question.answer);
+		let status=question.answer===answer;
+		
+		
 		if (type === '2') {
 			let checkboxValue = this.state.checkboxValue;
 			let filterValue = checkboxValue.filter(function (data, key) {
@@ -311,6 +306,17 @@ const Question = React.createClass({
 			json.value = data;
 			json['checked' + value] = !this.state['checked' + value];
 			json.checkboxValue = checkboxValue;
+			status=question.answer===data;
+		}
+		console.log(data);
+		if(status){
+			this.openDB(function(event){
+				self.setErrQuestion(event,question,'delete');
+			});
+		}else{
+			this.openDB(function(event){
+				self.setErrQuestion(event,question,'add');
+			});
 		}
 		this.setState(json);
 	},
@@ -350,10 +356,18 @@ const Question = React.createClass({
 	nextQuestion(){
 		this.showQuestion('show');
 		this.randomDo();
-		this.setState({
+		let json={
 			value:null,
+			checkboxValue:[],
 			disabled:false
-		});
+		};
+		let state = this.state;
+		for(let i in state){
+			if(i.indexOf('checked')>-1){
+				json[i]=false;
+			}
+		}
+		this.setState(json);
 	},
 	render() {
 		let self = this;
