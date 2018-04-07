@@ -142,12 +142,14 @@ const Question = React.createClass({
 		};
 		if (callback && typeof callback === 'object') {
 			this.setState({
-				status: true
+				status: true,
+				disabled: false
 			});
+			console.log(callback)
 			let pathname = window.location.pathname;
 			let hash = '/home/question';
 			hash = utils.makeUrl(hash, {
-				subject: callback.subject,
+				subject: callback.subjectId,
 				type: callback.type,
 				// questionId: callback.questionId
 			});
@@ -361,9 +363,8 @@ const Question = React.createClass({
 		let type = utils.queryString('type', window.location.href);
 		let question = this.state.question;
 		let recommendData = this.state.recommendData;
-		console.log(question)
 		if (!question) return null;
-		if (!question.questionId) return <div style={{marginTop:30}} className="ta_c">无数据！<p style={{display:this.state.browserError,fontSize:12,color:'#f60'}}>想查看错题集请使用Chrome浏览器进行访问，谢谢～</p></div>;
+		if (!question.title) return <div style={{marginTop:30}} className="ta_c">无数据！<p style={{display:this.state.browserError,fontSize:12,color:'#f60'}}>想查看错题集请使用Chrome浏览器进行访问，谢谢～</p></div>;
 		let content = question.content || [];
 		let contentData = content.map((data, key) => {
 			return {
