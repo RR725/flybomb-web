@@ -32,28 +32,38 @@ const Home = React.createClass({
 			});
 		});
 	},
-	randomDo() {
+	randomDo(type) {
 		let subjectList = this.state.subjectList;
 		let url = restapi.questionList;
 		this.props.form.validateFields((errors, values) => {
 			let subject = '';
 			subjectList.map(function (data, key) {
 				if (data.value === parseInt(values.subject[0])) {
-					subject = data.label;
+					subject = data.value;
 				}
 			});
 			let data = {
 				subject: subject,
 				type: parseInt(values.type[0])
 			};
+			let json={
+				subject:subject,
+				type:values.type[0]
 
+			};
+			if(type === 'err'){
+				json.err = true;
+			}
 
-			window.location.hash = '/home/question?subject=' + subject + '&type=' + values.type[0];
+			window.location.hash = utils.makeUrl('/home/question',json);
 		});
 
 	},
 	render() {
 		const { getFieldProps } = this.props.form;
+		let typeNum=this.props.form.getFieldValue('type');
+		typeNum = typeNum && typeNum[0];
+		console.log()
 		let type = questionType.map(function (data, key) {
 			return {
 				label: data.type_desc,
@@ -83,7 +93,9 @@ const Home = React.createClass({
 				
 
 				<WhiteSpace></WhiteSpace>
-				<Button onClick={this.randomDo} className="btn ">刷重点</Button>
+				{typeNum < 3 && 
+					<Button onClick={()=>this.randomDo('err')} className="btn ">错题集</Button>
+				}
 			</div>
 		);
 	}
