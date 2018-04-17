@@ -39,7 +39,8 @@ let Add = React.createClass({
 				password: values.password,
 			};
 			ajax.post(restapi.addQuestion, data, function () {
-				message.success('新建成功');
+				message.success('登录成功');
+				window.location.hash='/';
 			});
 		});
 	},

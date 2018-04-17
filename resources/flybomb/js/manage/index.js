@@ -24,7 +24,6 @@ const App = React.createClass({
 		let url = restapi.questionList;
 		
 		ajax.post(url, searchParam, function (result) {
-			console.log(result)
 			let data = result.value.result;
 			data.map(function (json, key) {
 				data[key]['key'] = key;

@@ -19,7 +19,7 @@ import page404 from "./404";
 
 import Home from "react-router!../js/manage"; //首页
 import Add from "react-router!../js/manage/add"; //添加
-import Login from "react-router!../js/manage/login"; //登录
+import Login from "react-router!../js/common/login"; //登录
 
 import {
 	Router,
@@ -61,7 +61,7 @@ render(
 		<Route path="/" component={App}>
 			<Route path="/manage" component={Home} />
 			<Route path="/manage/add" component={Add} />
-			<Route path="/manage/login" component={Login} />
+			<Route path="/login" component={Login} />
 			<IndexRedirect to="/manage" />
 		</Route>
 		<Route path="*" component={page404} />

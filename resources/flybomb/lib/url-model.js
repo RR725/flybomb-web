@@ -8,6 +8,9 @@ var host = "",
 		questionList: host + "/restapi/flybomb/question/list",
 		questionListRandom: host + "/restapi/flybomb/question/list/random",
 		questionFindOne: host + "/restapi/flybomb/question/find/one",
-		questionRecommend: host + "/restapi/flybomb/question/recommend"
+		questionRecommend: host + "/restapi/flybomb/question/recommend",
+		login: host + "/restapi/flybomb/login",
+		logout: host + "/restapi/flybomb/logout",
+		checkLogin: host + "/restapi/flybomb/checkLogin"
 	};
 module.exports = restapi;
