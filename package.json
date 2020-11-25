@@ -7,8 +7,7 @@
     "build": "node build.js",
     "start-dev": "webpack-dev-server --config webpack.config-dev.js --host 127.0.0.1 --port 80",
     "start-mobile-dev": "webpack-dev-server --config webpack.config.mobile-dev.js --host 127.0.0.1 --port 80",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "precommit": "eslint ./resources/flybomb/js/"
+    "test": "jest"
   },
   "author": "ecofe",
   "license": "ISC",
@@ -46,6 +45,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.1.21",
+    "babel-jest": "^23.6.0",
     "babel-loader": "^6.1.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.20.0",
@@ -57,6 +57,8 @@
     "eslint-plugin-react": "^6.10.3",
     "fetch-jsonp": "^1.0.0",
     "file-loader": "^0.7.2",
+    "jest": "^23.6.0",
+    "jest-cli": "^23.6.0",
     "less": "^1.7.5",
     "less-loader": "^0.7.7",
     "mkdirpd": "^0.1.8",
