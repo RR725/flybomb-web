@@ -25,7 +25,7 @@ const App = React.createClass({
     let url = restapi.stockList
 
     ajax.post(url, searchParam, function (result) {
-      let data = result.value.result
+      let data = result.value
       data.map(function (json, key) {
         data[key]['key'] = key
       })
