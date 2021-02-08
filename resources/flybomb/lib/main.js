@@ -29,38 +29,38 @@ import Header from '../components/header'
 import Footer from '../components/footer'
 
 var App = React.createClass({
-  getInitialState() {
-    return {
-      loginInfo: null,
-      userName: null,
-      data: null,
-    }
-  },
-  componentDidMount() {},
-  render: function () {
-    const children = this.props.children
+    getInitialState() {
+        return {
+            loginInfo: null,
+            userName: null,
+            data: null,
+        }
+    },
+    componentDidMount() {},
+    render: function () {
+        const children = this.props.children
 
-    return (
-      <div>
-        <Header />
-        <div className="container">{children}</div>
-        <Footer />
-      </div>
-    )
-  },
+        return (
+            <div>
+                <Header />
+                <div className="container">{children}</div>
+                <Footer />
+            </div>
+        )
+    },
 })
 
 render(
-  <Router history={hashHistory} state="999">
-    <Route path="/" component={App}>
-      <Route path="/manage" component={Home} />
-      <Route path="/manage/add" component={Add} />
-      <Route path="/stock" component={Stock} />
-      <Route path="/stock/add" component={StockAdd} />
-      <Route path="/login" component={Login} />
-      <IndexRedirect to="/manage" />
-    </Route>
-    <Route path="*" component={page404} />
-  </Router>,
-  document.getElementById('wrap')
+    <Router history={hashHistory} state="999">
+        <Route path="/" component={App}>
+            <Route path="/manage" component={Home} />
+            <Route path="/manage/add" component={Add} />
+            <Route path="/stock" component={Stock} />
+            <Route path="/stock/add" component={StockAdd} />
+            <Route path="/login" component={Login} />
+            <IndexRedirect to="/manage" />
+        </Route>
+        <Route path="*" component={page404} />
+    </Router>,
+    document.getElementById('wrap')
 )
