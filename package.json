@@ -25,7 +25,7 @@
     "filedel": "^2.0.4",
     "html-webpack-plugin": "^2.15.0",
     "husky": "^0.13.3",
-    "jquery-ui": "^1.12.1",
+    "jquery-ui": "^1.13.0",
     "match-media": "^0.2.0",
     "medium-editor": "^5.22.2",
     "react": "^15.2.1",
